@@ -1,0 +1,44 @@
+Exoplanet Finder
+Copyright 2026 Muhammad Abu Bakr Siddique
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Scientific attribution
+----------------------
+This project is an independent reimplementation inspired by:
+
+  Christopher J. Shallue and Andrew Vanderburg (2018),
+  "Identifying Exoplanets with Deep Learning: A Five-planet Resonant Chain
+  around Kepler-80 and an Eighth Planet around Kepler-90",
+  The Astronomical Journal 155, 94. arXiv:1712.05044.
+
+  AstroNet, in google-research/exoplanet-ml
+  (https://github.com/google-research/exoplanet-ml), Copyright 2018 The
+  Exoplanet ML Authors, licensed under the Apache License, Version 2.0.
+
+No AstroNet source code is copied into this repository. Design choices
+adopted from that work (global/local view lengths of 2001/201 bins, local
+window of +-4 transit durations with bin width 0.16 durations, view
+normalisation to median 0 and minimum -1, DR24 av_training_set label mapping
+PC -> 1, AFP/NTP -> 0, UNK excluded) are reimplemented independently and are
+documented in README.md.
+
+Data
+----
+* Kepler Q1-Q17 DR24 Threshold Crossing Event table and Planetary Systems
+  table: NASA Exoplanet Archive, operated by the California Institute of
+  Technology under contract with NASA. This research has made use of the NASA
+  Exoplanet Archive.
+* Kepler long-cadence light curves (Data Release 25): Mikulski Archive for
+  Space Telescopes (MAST) at the Space Telescope Science Institute. This
+  paper includes data collected by the Kepler mission. Funding for the Kepler
+  mission is provided by the NASA Science Mission Directorate.
+
+The bundled light curves in app/examples/ are unmodified TIME, PDCSAP_FLUX,
+SAP_QUALITY and QUARTER values extracted from those public MAST files.
+
+Software
+--------
+Lightkurve (MIT licence) is used for the reference Kepler quality bitmask
+value, which is hard-coded in src/exofinder/lightcurve.py and verified against
+the installed Lightkurve in tests.
