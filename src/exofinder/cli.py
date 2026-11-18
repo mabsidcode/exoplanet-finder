@@ -87,6 +87,38 @@ def cmd_fetch(args, cfg):
     print(json.dumps(stats, indent=2))
 
 
+def cmd_status(args, cfg):
+    """Reconcile the selected stars with their ledgers (safe to run during a fetch)."""
+    from .io_utils import read_json
+    from .pipeline import _dir_bytes
+
+    p = _paths(cfg)
+    sel_path = p.dataset_dir(cfg["experiment_name"]) / "selected_stars.csv"
+    sel = pd.read_csv(sel_path)["kepid"].tolist() if sel_path.exists() else []
+    star_status: dict[str, int] = {}
+    tce_status: dict[str, int] = {}
+    failed = []
+    for k in sel:
+        lp = p.ledger / f"{k:09d}.json"
+        if not lp.exists():
+            star_status["pending"] = star_status.get("pending", 0) + 1
+            continue
+        try:
+            led = read_json(lp)
+        except Exception:  # noqa: BLE001 - being written
+            star_status["unreadable"] = star_status.get("unreadable", 0) + 1
+            continue
+        star_status[led["status"]] = star_status.get(led["status"], 0) + 1
+        if led["status"] != "done":
+            failed.append((k, led["status"], led.get("reason", "")))
+        for e in led["examples"]:
+            key = e["status"] if e["status"] == "ok" else f"{e['status']}:{e.get('reason', '')}"
+            tce_status[key] = tce_status.get(key, 0) + 1
+    print(json.dumps({"selected_stars": len(sel), "stars": star_status, "tces": tce_status,
+                      "raw_cache_mb": round(_dir_bytes(p.raw_cache) / 1e6, 1),
+                      "failed_stars": failed[:50]}, indent=2))
+
+
 def cmd_build_dataset(args, cfg):
     from .dataset import build
 
@@ -144,6 +176,7 @@ def main(argv: list[str] | None = None) -> int:
     sp = add("fetch", cmd_fetch, "Download light curves and preprocess (resumable)")
     sp.add_argument("--workers", type=int, default=None)
     sp.add_argument("--limit", type=int, default=None, help="Process only the first N selected stars")
+    add("status", cmd_status, "Summarise fetch progress, failures and exclusions")
     add("build-dataset", cmd_build_dataset, "Consolidate processed views and write the manifest")
     add("train-baseline", cmd_train_baseline, "Train scikit-learn baselines")
     sp = add("train-cnn", cmd_train_cnn, "Train the dual-branch CNN")
