@@ -43,7 +43,20 @@
 See [`reports/full/RESULTS.md`](reports/full/RESULTS.md) and the Results section of the README.
 
 <!-- MODEL-CARD-RESULTS:START -->
-*Pending completion of the full experiment.*
+* **Released model**: `cnn_global_local_seed2`, chosen by validation AP (0.929) among 3 global+local seeds.
+  Decision threshold 0.671.
+* **Test split**: 2,362 DR24 TCEs on 1,481 stars that were never used for training or selection. 545 are PC
+  (prevalence 0.231).
+* **Test metrics**: AP **0.913** (95% star-bootstrap interval 0.886–0.939), ROC-AUC 0.977, precision 0.830,
+  recall 0.912, F1 0.869 and accuracy 0.936 (TP 497, FP 102, TN 1,715, FN 48).
+* **False-positive rate by original category**: AFP 6.9% (100/1,451), NTP 0.5% (2/366). Most errors on negatives
+  are astrophysical false positives whose light curves look planet-like.
+* **Comparison**: the gradient-boosting feature baseline has AP 0.873; the CNN's advantage is ΔAP +0.041
+  [+0.013, +0.070]. Across 3 seeds, global+local AP is 0.897 ± 0.024 and global-only AP is 0.882 ± 0.004.
+* **Weakest subgroups**: measured SNR < 18.8 (AP 0.850, recall 0.820) and duration < 2.42 h (AP 0.868, recall
+  0.829).
+* **Usable data**: 15,733 of 15,737 labelled TCEs (4 training NTPs rejected by preprocessing). 0 download failures.
+* Details: [docs/RESULTS_REPORT.md](docs/RESULTS_REPORT.md).
 <!-- MODEL-CARD-RESULTS:END -->
 
 ## Known failure modes and caveats
@@ -55,11 +68,15 @@ See [`reports/full/RESULTS.md`](reports/full/RESULTS.md) and the Results section
 * **Ephemeris errors** smear the folded transit. DR24 ephemerides may drift relative to DR25 light curves for long
   baselines.
 * **Long periods** with 1–2 observed transits give sparse global views.
-* **Score is uncalibrated**. Scores near the threshold should be treated as uncertain.
+* **Training instability**: one of three seeds (seed 1) plateaued early (test AP 0.869 vs 0.908 and 0.913), so a
+  single retrained model may perform noticeably differently.
+* **Light-curve-only blind spot**: AFPs identified from centroid shifts or contaminating neighbours can look like
+  clean transits and receive high scores.
+* **Score is uncalibrated** (test Brier 0.052, for reference only). Scores near the threshold should be treated as uncertain.
 
 ## Distribution limits
 The model has only seen phase-folded Kepler long-cadence PDCSAP light curves of DR24 TCEs, normalised as described
-in the README. Periods range from about 0.5 to several hundred days, and durations are as listed in DR24. Inputs
+in the README. Usable training-population periods span 0.50–726.6 days and durations 0.50–57.7 hours. Inputs
 outside these ranges, or from other instruments, are out of distribution even if the app accepts them.
 
 ## Ethical and scientific responsibility

@@ -1,0 +1,98 @@
+{
+  "built_utc": "2026-11-18T16:56:06+00:00",
+  "by_split": {
+    "demo_holdout": {
+      "n_examples": 1,
+      "n_neg": 0,
+      "n_pos": 1,
+      "n_stars": 1,
+      "prevalence": 1.0
+    },
+    "test": {
+      "n_examples": 2362,
+      "n_neg": 1817,
+      "n_pos": 545,
+      "n_stars": 1481,
+      "prevalence": 0.2307
+    },
+    "train": {
+      "n_examples": 11010,
+      "n_neg": 8492,
+      "n_pos": 2518,
+      "n_stars": 6900,
+      "prevalence": 0.2287
+    },
+    "val": {
+      "n_examples": 2360,
+      "n_neg": 1824,
+      "n_pos": 536,
+      "n_stars": 1479,
+      "prevalence": 0.2271
+    }
+  },
+  "by_split_disposition": {
+    "demo_holdout": {
+      "AFP": 0,
+      "NTP": 0,
+      "PC": 1
+    },
+    "test": {
+      "AFP": 1451,
+      "NTP": 366,
+      "PC": 545
+    },
+    "train": {
+      "AFP": 6656,
+      "NTP": 1836,
+      "PC": 2518
+    },
+    "val": {
+      "AFP": 1489,
+      "NTP": 335,
+      "PC": 536
+    }
+  },
+  "catalog_snapshot_sha256": "fe7a51c63a23bc98900a1041d90b5bcc0453ee6dd99a6dc17cf50322b36d091d",
+  "exclusion_reasons": {
+    "insufficient_transit_coverage": 1,
+    "low_global_coverage": 1,
+    "low_local_coverage": 2
+  },
+  "experiment": "full",
+  "failed_download_stars": 0,
+  "light_curve_data_releases": [
+    "25"
+  ],
+  "n_selected_examples": 15737,
+  "n_selected_stars": 9865,
+  "n_usable_examples": 15733,
+  "n_usable_stars": 9861,
+  "preprocess": {
+    "flux_column": "PDCSAP_FLUX",
+    "gap_days": 0.75,
+    "global_num_bins": 2001,
+    "local_bin_width_durations": 0.16,
+    "local_num_bins": 201,
+    "local_num_durations": 4.0,
+    "min_global_coverage": 0.3,
+    "min_in_transit_points": 3,
+    "min_local_coverage": 0.5,
+    "min_points": 100,
+    "min_scale": 1e-06,
+    "quality_bitmask": "default",
+    "spline_bkspace_days": 1.5,
+    "spline_max_iter": 5,
+    "spline_sigma_clip": 3.0,
+    "transit_mask_half_width_durations": 1.5,
+    "upper_outlier_sigma": 5.0,
+    "version": "1.0.0",
+    "view_clip": 10.0
+  },
+  "preprocess_fingerprint": "7afac58f6d9539ec",
+  "split_manifest_sha256": "c5e173f498c8a003c383a228d312b47211af4ce28777e0466fb72cc36ead964c",
+  "status_counts": {
+    "ok": 15733,
+    "rejected": 4
+  },
+  "views_sha256": "4cef2ed2d7ae88c1f8f3502356bc4285a7f8a1b716c62aee7e740ac16a9c452d"
+}

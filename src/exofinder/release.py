@@ -122,7 +122,7 @@ def bundle_examples(cfg: dict[str, Any], paths: Paths) -> list[dict[str, Any]]:
     exp = cfg["experiment_name"]
     metrics = read_json(paths.report_dir(exp) / "metrics.json")
     rel = metrics["release_model"]
-    preds = pd.read_csv(paths.report_dir(exp) / "predictions.csv", dtype={"tce_id": str})
+    preds = pd.read_csv(paths.report_dir(exp) / "predictions.csv.gz", dtype={"tce_id": str})
     t = preds[(preds["model"] == rel) & (preds["split"] == "test")]
     rules = [
         ("Test PC with the highest CNN score", t[t["original_disposition"] == "PC"].nlargest(1, "score")),

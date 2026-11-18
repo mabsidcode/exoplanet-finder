@@ -1,0 +1,100 @@
+{
+  "catalog_labelled_stars": 9865,
+  "catalog_labelled_tces": 15737,
+  "dataset": {
+    "by_split": {
+      "demo_holdout": {
+        "n_examples": 1,
+        "n_neg": 0,
+        "n_pos": 1,
+        "n_stars": 1,
+        "prevalence": 1.0
+      },
+      "test": {
+        "n_examples": 2362,
+        "n_neg": 1817,
+        "n_pos": 545,
+        "n_stars": 1481,
+        "prevalence": 0.2307
+      },
+      "train": {
+        "n_examples": 11010,
+        "n_neg": 8492,
+        "n_pos": 2518,
+        "n_stars": 6900,
+        "prevalence": 0.2287
+      },
+      "val": {
+        "n_examples": 2360,
+        "n_neg": 1824,
+        "n_pos": 536,
+        "n_stars": 1479,
+        "prevalence": 0.2271
+      }
+    },
+    "by_split_disposition": {
+      "demo_holdout": {
+        "AFP": 0,
+        "NTP": 0,
+        "PC": 1
+      },
+      "test": {
+        "AFP": 1451,
+        "NTP": 366,
+        "PC": 545
+      },
+      "train": {
+        "AFP": 6656,
+        "NTP": 1836,
+        "PC": 2518
+      },
+      "val": {
+        "AFP": 1489,
+        "NTP": 335,
+        "PC": 536
+      }
+    },
+    "exclusion_reasons": {
+      "insufficient_transit_coverage": 1,
+      "low_global_coverage": 1,
+      "low_local_coverage": 2
+    },
+    "light_curve_data_releases": [
+      "25"
+    ],
+    "n_selected_examples": 15737,
+    "n_usable_examples": 15733,
+    "n_usable_stars": 9861,
+    "preprocess_fingerprint": "7afac58f6d9539ec",
+    "status_counts": {
+      "ok": 15733,
+      "rejected": 4
+    },
+    "views_sha256": "4cef2ed2d7ae88c1f8f3502356bc4285a7f8a1b716c62aee7e740ac16a9c452d"
+  },
+  "fetch_main_pass": {
+    "bytes": 66454464960,
+    "done": 9663,
+    "elapsed_s": 17157.3,
+    "failed": 2,
+    "n_stars": 9865,
+    "peak_raw_bytes": 166563648,
+    "skipped": 200,
+    "statuses": {
+      "done": 9863,
+      "failed_download": 2
+    }
+  },
+  "fetch_main_pass_note": "skipped = stars completed in the earlier 50-star smoke run and 150-star throughput test; peak_raw_bytes sampled every 10 stars",
+  "fetch_retry_pass": {
+    "bytes": 3738240,
+    "done": 2,
+    "failed": 0,
+    "skipped": 9863,
+    "statuses": {
+      "done": 9865
+    }
+  },
+  "final_failed_download_stars": 0,
+  "generated_utc": "2026-11-18T17:31:08+00:00"
+}

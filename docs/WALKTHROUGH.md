@@ -168,3 +168,18 @@ A score above the threshold says: *"this folded signal looks more like DR24's pl
 positives."* It does not check pixel-level centroid shifts, nearby contaminating stars, or radial velocities, which
 are what astronomers use to confirm a planet. Kepler-90 i itself was **statistically validated** by Shallue &
 Vanderburg using such additional analyses, not by the CNN score alone.
+
+## 12. What happened when we ran it
+
+* The full set covered 15,733 usable candidates from 9,861 stars. Training took 1.5–4.5 minutes per CNN on a laptop GPU (Apple M5).
+* On 2,362 test candidates from 1,481 never-seen stars, the released CNN reached **AP 0.913**. A random ranking would
+  score ≈ 0.23. The gradient-boosting baseline reached 0.873 and logistic regression 0.642.
+* Three identical CNN set-ups with different random seeds scored 0.908, 0.869 and 0.913. Random initialisation alone
+  moves results this much, which is why reporting one lucky run would be misleading.
+* Kepler-90 h scored 0.982 and Kepler-90 i 0.987 (threshold 0.671). The global-only models gave Kepler-90 h scores
+  of 0.017, 0.490 and 0.810: in a 2001-bin view of a 331-day orbit, its transit is only ~4 bins wide. That is the
+  problem the local view solves.
+* Typical mistakes: AFPs that look like perfect transits (they were rejected using pixel-level evidence the model
+  never sees), and real candidates on very variable stars, where detrending could not flatten the light curve.
+
+Full numbers, figures and error analysis: [RESULTS_REPORT.md](RESULTS_REPORT.md).

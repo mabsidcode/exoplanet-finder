@@ -48,7 +48,7 @@ st.caption("Average precision = Σₙ (Rₙ − Rₙ₋₁)·Pₙ over score thr
            "Thresholds were selected on the validation split by maximising F1; a prediction is PC when score ≥ threshold. "
            f"Always predicting AFP/NTP would give accuracy {1 - t['prevalence']:.3f} with zero recall — so accuracy is secondary.")
 
-pp = REPORT_DIR / "predictions.csv"
+pp = REPORT_DIR / "predictions.csv.gz"
 if pp.exists():
     preds = pd.read_csv(pp, dtype={"tce_id": str})
     test = preds[preds["split"] == "test"]

@@ -19,8 +19,36 @@ reimplementation with a stricter evaluation protocol. See [Differences from Astr
 <!-- RESULTS:START -->
 ## Results
 
-*Pending: the full-data experiment is running. This section is filled from `reports/full/metrics.json` after
-evaluation.*
+These are measured on the **held-out test split: 2,362 TCEs on 1,481 host stars**, none of which were used for
+training, checkpoint selection or thresholds. 545 are PC, so prevalence is 23.1%. The task is reproducing DR24
+`av_training_set` labels. Full report: [docs/RESULTS_REPORT.md](docs/RESULTS_REPORT.md).
+
+| model (threshold chosen on validation) | test AP [95% star-bootstrap] | ROC-AUC | precision | recall | F1 | accuracy |
+|---|---|---|---|---|---|---|
+| **CNN global+local (release, seed 2)** | **0.913** [0.886, 0.939] | 0.977 | 0.830 | 0.912 | 0.869 | 0.936 |
+| CNN global+local, mean ± sd of 3 seeds | 0.897 ± 0.024 | 0.972 ± 0.008 | | | 0.851 ± 0.025 | |
+| CNN global-only, mean ± sd of 3 seeds | 0.882 ± 0.004 | 0.970 ± 0.001 | | | 0.850 ± 0.002 | |
+| Gradient-boosting baseline (13 features) | 0.873 [0.836, 0.905] | 0.969 | 0.801 | 0.901 | 0.848 | 0.925 |
+| Logistic-regression baseline | 0.642 [0.595, 0.695] | 0.913 | 0.643 | 0.840 | 0.729 | 0.856 |
+
+* The release CNN's test AP is **0.041 higher** than the gradient-boosting baseline (95% star-bootstrap interval
+  +0.013 to +0.070). Its confusion matrix at threshold 0.671 is TP 497, FP 102, TN 1,715, FN 48.
+* **Seed variation is real.** Global+local seeds reached test AP 0.908, 0.869 and 0.913. Seed 1 plateaued early,
+  at a validation AP of 0.884. Two of the three global+local seeds beat every global-only seed, but the mean gap
+  (+0.015 AP) is smaller than the global+local seed spread. The benefit of the local view is therefore suggestive,
+  not conclusive, at three seeds.
+* The release model was chosen by validation AP (0.929). Its test AP (0.913) was only computed afterwards.
+* **Kepler-90** was held out from all splits. Release-CNN score for Kepler-90 h (DR24 TCE, label PC): **0.982**.
+  For Kepler-90 i (not a DR24 TCE; Shallue & Vanderburg 2018 parameters): **0.987**. Both are above the 0.671
+  threshold. That means both folded signals resemble DR24 planet candidates; it is not independent confirmation.
+  The gradient-boosting baseline scored Kepler-90 h below its threshold (0.523 vs 0.626).
+* Main failure modes in the test set: AFPs that look like clean planetary transits in the light curve (their FP
+  status comes from evidence such as pixel centroids, which the model never sees), and PCs whose stars vary strongly
+  on time scales near the orbital period, which detrending does not fully remove.
+* Scores are **not calibrated** probabilities (test Brier score 0.052, reported for reference only).
+
+Not comparable to the paper's AUC 0.988: different split (by star rather than random by TCE), light-curve release,
+preprocessing, architecture and no 10-model ensemble.
 <!-- RESULTS:END -->
 
 ---
@@ -62,10 +90,20 @@ reproduce the same examples. `fetch-catalog` and `make-splits` refuse to overwri
 The quick-start configuration exercises the whole pipeline on real data, but its 67 examples are far too few for
 meaningful metrics.
 
-**Measured cost of the full download** (this machine, 12 worker processes): ≈ 2,300–2,500 stars/hour,
-≈ 7.0 MB of FITS per star (≈ 69 GB transferred in total). Raw files are deleted once each star's views are saved and
-verified, so the peak raw cache stayed below ~130 MB. Processed views total ≈ 100–200 MB. Interrupted runs resume
-from per-star ledgers in `data/processed/ledger/`.
+The per-example dataset manifest from the full run (identifiers, catalogue release and disposition, label, units, time
+reference, light-curve source files and retrieval times, preprocessing status and exclusion reason) is committed as
+`reports/full/dataset/examples.csv.gz` together with `manifest.json`.
+
+A Colab notebook was not needed: the complete full experiment ran locally (download about 4.8 h, all eight model runs
+about 20 min on Apple MPS). The code also runs on CPU or CUDA.
+
+**Measured cost of the full download** (this machine, 12 worker processes, November 2026): the main pass processed
+9,663 new stars in 4.77 h (≈ 2,030 stars/h on average; it slowed from ~2,500/h when MAST responses slowed) and
+transferred **66.45 GB** of FITS (≈ 6.9 MB per star). Two stars failed with read timeouts and succeeded on a plain
+re-run of `exofinder fetch`, which skips completed stars. Raw files are deleted once each star's views are saved and
+verified, so the raw cache peaked at ~167 MB (sampled every 10 stars). Per-star processed outputs take 277 MB and the
+consolidated dataset 155 MB. Run `exofinder status --config configs/full.yaml` to see progress and failures. The
+CNN runs took 1.5–4.5 minutes each on an Apple M5 (MPS).
 
 ---
 
@@ -107,8 +145,10 @@ from training, validation and the main benchmark and is reported separately.
 | test | 1,481 | 2,362 | 545 | 1,817 |
 | demo_holdout | 1 | 1 | 1 | 0 |
 
-*(Catalogue-level counts. Usable counts after download and preprocessing exclusions are in the dataset manifest and the
-results section.)*
+After download and preprocessing, **15,733 of 15,737** TCEs (9,861 stars) are usable. All 9,865 stars downloaded,
+with 0 final download failures. The 4 excluded TCEs are all training-split NTPs: 2 have low local coverage, 1 has
+insufficient in-transit points and 1 has low global coverage. Usable training split: 11,010 TCEs on 6,900 stars.
+Validation and test are unchanged. Reconciliation is in `reports/full/data_reconciliation.json`.
 
 ## Preprocessing (shared by training and the demo)
 
@@ -163,7 +203,7 @@ with the model. Three seeds are trained on the same fixed split.
   ROC-AUC, precision / recall / F1 and confusion matrix at the validation threshold, and accuracy as a secondary metric.
   Uncertainty comes from a star-level bootstrap of the test split.
 * Release model = the global+local CNN run with the highest **validation** AP.
-* Per-example predictions for all splits and models are saved in `reports/full/predictions.csv`, so every number can
+* Per-example predictions for all splits and models are saved in `reports/full/predictions.csv.gz`, so every number can
   be recomputed.
 
 ## Demo app
@@ -213,8 +253,8 @@ data/catalog/         DR24 snapshot + provenance            (committed)
 data/splits/          split manifest + info                 (committed)
 data/{cache,processed,datasets}/                            (git-ignored, regenerated)
 models/release/       released CNN + baseline + card        (committed)
-reports/full/         metrics, predictions, figures, RESULTS.md
-docs/                 WALKTHROUGH.md, figures
+reports/full/         metrics, predictions, figures, RESULTS.md (auto-generated), model selection, reconciliation
+docs/                 RESULTS_REPORT.md, WALKTHROUGH.md, EVALUATION_PROTOCOL.md, figures
 tests/                pytest suite
 ```
 
