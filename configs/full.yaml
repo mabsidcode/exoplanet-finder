@@ -1,0 +1,76 @@
+# Full-experiment configuration: every labelled DR24 TCE with retrievable data.
+# Uses the same catalogue snapshot and the same fixed star-level split as the
+# full experiment, so the test stars never change. Only the number of stars
+# downloaded and the training budget differ.
+experiment_name: full
+
+paths:
+  data_dir: data
+  models_dir: models
+  reports_dir: reports
+
+catalog:
+  tap_url: https://exoplanetarchive.ipac.caltech.edu/TAP/sync
+  table: q1_q17_dr24_tce
+  label_column: av_training_set
+  positive: [PC]
+  negative: [AFP, NTP]
+  excluded: [UNK]
+  # Kepler-90 is reserved for demonstration; none of its examples are used for
+  # training, validation or the main benchmark.
+  demo_holdout_kepids: [11442793]
+
+split:
+  seed: 20171215
+  fractions: {train: 0.70, val: 0.15, test: 0.15}
+
+download:
+  base_url: https://archive.stsci.edu/missions/kepler/lightcurves
+  # null = all labelled stars.
+  max_stars: null
+  sample_seed: 7
+  workers: 12
+  retries: 4
+  timeout_s: 90
+  delete_raw_after_processing: true
+  keep_raw_debug_stars: 5
+  keep_raw_kepids: [11442793]
+
+preprocess:
+  flux_column: PDCSAP_FLUX
+  quality_bitmask: default
+  gap_days: 0.75
+  spline_bkspace_days: 1.5
+  spline_sigma_clip: 3.0
+  spline_max_iter: 5
+  transit_mask_half_width_durations: 1.5
+  upper_outlier_sigma: 5.0
+  global_num_bins: 2001
+  local_num_bins: 201
+  local_num_durations: 4.0
+  local_bin_width_durations: 0.16
+  min_points: 100
+  min_in_transit_points: 3
+  min_global_coverage: 0.3
+  min_local_coverage: 0.5
+  min_scale: 1.0e-6
+  view_clip: 10.0
+
+train:
+  seeds: [0, 1, 2]
+  epochs: 40
+  batch_size: 128
+  lr: 1.0e-3
+  weight_decay: 1.0e-4
+  patience: 8
+  augment_time_reversal: true
+  device: auto
+  num_workers: 0
+
+model:
+  global_channels: [16, 32, 64, 64, 64]
+  local_channels: [16, 32]
+  kernel_size: 5
+  head_hidden: [256, 256]
+  dropout: 0.3
+  use_local: true

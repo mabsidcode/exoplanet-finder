@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+build/
+dist/
+
+# Data and caches (regenerate with the documented commands)
+data/*
+!data/catalog/
+!data/splits/
+data/catalog/*
+!data/catalog/dr24_tce_snapshot.csv
+!data/catalog/dr24_tce_snapshot.provenance.json
+data/splits/*
+!data/splits/split_manifest.csv
+!data/splits/split_info.json
+
+# Model checkpoints: only the released demo bundle is committed
+models/*
+!models/release/
+models/release/*
+!models/release/*.pt
+!models/release/*.joblib
+!models/release/*.json
+
+# Run artefacts
+runs/
+reports/figures/*.html
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+.remember/
+
+# Smoke-run reports are regenerated locally and not meaningful results
+reports/quickstart/

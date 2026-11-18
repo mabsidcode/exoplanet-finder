@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "exofinder"
+version = "0.1.0"
+description = "Exoplanet Finder: an AstroNet-inspired 1D CNN that scores Kepler candidate transit signals."
+readme = "README.md"
+license = "Apache-2.0"
+authors = [{ name = "Muhammad Abu Bakr Siddique" }]
+requires-python = ">=3.11"
+dependencies = [
+  "numpy>=2.0",
+  "pandas>=2.2",
+  "scipy>=1.13",
+  "scikit-learn>=1.5",
+  "astropy>=6.0",
+  "lightkurve>=2.4",
+  "torch>=2.4",
+  "pyyaml>=6.0",
+  "requests>=2.31",
+  "matplotlib>=3.8",
+  "plotly>=5.20",
+  "streamlit>=1.38",
+  "joblib>=1.3",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[project.scripts]
+exofinder = "exofinder.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "NPY"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["realdata: uses bundled real Kepler data (offline)"]

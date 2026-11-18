@@ -1,0 +1,45 @@
+{
+  "catalog_snapshot_sha256": "fe7a51c63a23bc98900a1041d90b5bcc0453ee6dd99a6dc17cf50322b36d091d",
+  "created_utc": "2026-11-18T12:01:20+00:00",
+  "demo_holdout_kepids": [
+    11442793
+  ],
+  "fractions": {
+    "test": 0.15,
+    "train": 0.7,
+    "val": 0.15
+  },
+  "grouping": "host star (kepid); stratified by star hosting >=1 PC",
+  "seed": 20171215,
+  "split_manifest_sha256": "c5e173f498c8a003c383a228d312b47211af4ce28777e0466fb72cc36ead964c",
+  "summary": {
+    "demo_holdout": {
+      "n_examples": 1,
+      "n_neg": 0,
+      "n_pos": 1,
+      "n_stars": 1,
+      "prevalence": 1.0
+    },
+    "test": {
+      "n_examples": 2362,
+      "n_neg": 1817,
+      "n_pos": 545,
+      "n_stars": 1481,
+      "prevalence": 0.2307
+    },
+    "train": {
+      "n_examples": 11014,
+      "n_neg": 8496,
+      "n_pos": 2518,
+      "n_stars": 6904,
+      "prevalence": 0.2286
+    },
+    "val": {
+      "n_examples": 2360,
+      "n_neg": 1824,
+      "n_pos": 536,
+      "n_stars": 1479,
+      "prevalence": 0.2271
+    }
+  }
+}

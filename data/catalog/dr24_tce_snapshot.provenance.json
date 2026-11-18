@@ -1,0 +1,24 @@
+{
+  "catalog_release": "Kepler Q1-Q17 DR24 TCE (NASA Exoplanet Archive table q1_q17_dr24_tce)",
+  "column_units": {
+    "tce_depth": "ppm",
+    "tce_duration": "hours",
+    "tce_model_snr": "dimensionless",
+    "tce_period": "days",
+    "tce_time0bk": "BKJD days (BJD_TDB - 2454833.0)"
+  },
+  "label_column": "av_training_set",
+  "label_value_counts": {
+    "AFP": 9596,
+    "NTP": 2541,
+    "PC": 3600,
+    "UNK": 4630
+  },
+  "n_rows": 20367,
+  "query": "select kepid,tce_plnt_num,tce_period,tce_period_err,tce_time0bk,tce_time0bk_err,tce_duration,tce_duration_err,tce_depth,tce_model_snr,tce_num_transits,tce_rogue_flag,tce_delivname,av_training_set,ra,dec from q1_q17_dr24_tce order by kepid, tce_plnt_num",
+  "request_url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+kepid%2Ctce_plnt_num%2Ctce_period%2Ctce_period_err%2Ctce_time0bk%2Ctce_time0bk_err%2Ctce_duration%2Ctce_duration_err%2Ctce_depth%2Ctce_model_snr%2Ctce_num_transits%2Ctce_rogue_flag%2Ctce_delivname%2Cav_training_set%2Cra%2Cdec+from+q1_q17_dr24_tce+order+by+kepid%2C+tce_plnt_num&format=csv",
+  "retrieved_utc": "2026-11-18T12:01:20+00:00",
+  "sha256": "fe7a51c63a23bc98900a1041d90b5bcc0453ee6dd99a6dc17cf50322b36d091d",
+  "tap_url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync",
+  "time_reference": "BKJD = BJD_TDB - 2454833.0 (days)"
+}
