@@ -16,6 +16,19 @@ CNN ([arXiv:1712.05044](https://arxiv.org/abs/1712.05044),
 [google-research/exoplanet-ml](https://github.com/google-research/exoplanet-ml)). This is an independent, smaller
 reimplementation with a stricter evaluation protocol. See [Differences from AstroNet](#differences-from-astronet).
 
+## Watch the narrated demo
+
+[![Narrated demo video: Kepler-90 i's folded transit in the Exoplanet Finder app (click to download the MP4)](demo_video/thumbnail.jpg)](https://github.com/mabsidcode/exoplanet-finder/releases/download/demo-narrated-2026-11-19/exoplanet_finder_linkedin_narrated.mp4)
+
+**[Download the narrated demo video (MP4, 89 s, 24 MB)](https://github.com/mabsidcode/exoplanet-finder/releases/download/demo-narrated-2026-11-19/exoplanet_finder_linkedin_narrated.mp4)**: an
+English-narrated walkthrough of the app. It covers Kepler-90 i's light curve, folding, the model's two input views
+and score, one catalogue-label disagreement (Kepler-529 d), and the held-out evaluation. GitHub delivers the file as
+a download, so your browser may save it instead of playing it. Details and checksum are on the
+[release page](https://github.com/mabsidcode/exoplanet-finder/releases/tag/demo-narrated-2026-11-19).
+
+*Narration: generated with ElevenLabs ([elevenlabs.io](https://elevenlabs.io)) on the free plan, so the video is
+for non-commercial use only. This applies to the narrated video, not the code, which is Apache-2.0.*
+
 <!-- RESULTS:START -->
 ## Results
 
