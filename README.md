@@ -43,10 +43,19 @@ training, checkpoint selection or thresholds. 545 are PC, so prevalence is 23.1%
   threshold. That means both folded signals resemble DR24 planet candidates; it is not independent confirmation.
   The gradient-boosting baseline scored Kepler-90 h below its threshold (0.523 vs 0.626).
 * Main failure modes in the test set: AFPs that look like clean planetary transits in the light curve, and PCs whose
-  stars vary strongly on time scales near the orbital period, which detrending does not fully remove. Our
-  *hypothesis* for the first group is that their FP status rests on evidence the model never sees, such as pixel
-  centroid shifts. This has not been checked against catalogue diagnostics (see
-  [error analysis](docs/RESULTS_REPORT.md#7-error-analysis-examples-chosen-by-fixed-rules-not-by-hand)).
+  stars vary strongly on time scales near the orbital period. As later-catalogue context, we matched the
+  rule-selected error examples to the Kepler **DR25** KOI vetting flags by star, period and epoch (DR24 labels and
+  all metrics unchanged):
+  * Of the two highest-scoring AFPs, one (`010470206_01`) carries the DR25 **centroid-offset** flag, so its signal
+    comes from a nearby star the light curve cannot reveal. The other (`010587105_03`) is a DR25 **candidate with no
+    false-positive flags**, now listed as the confirmed planet Kepler-529 d.
+  * The lowest-scoring PC (`008822421_01`) is a DR25 false positive flagged **not transit-like** (sinusoidal
+    variability larger than the dip).
+  * Five of the nine discussed examples could not be matched to a KOI unambiguously and remain unresolved.
+
+  Some test "errors" are therefore disagreements between DR24 and DR25 labels. Details:
+  [error analysis](docs/RESULTS_REPORT.md#7-error-analysis-examples-chosen-by-fixed-rules-not-by-hand) and
+  [`reports/full/dr25_koi_check/`](reports/full/dr25_koi_check/RESULTS.md).
 * Scores are **not calibrated** probabilities (test Brier score 0.052, reported for reference only).
 
 Not comparable to the paper's AUC 0.988: different split (by star rather than random by TCE), light-curve release,
@@ -281,8 +290,10 @@ data/catalog/         DR24 snapshot + provenance            (committed)
 data/splits/          split manifest + info                 (committed)
 data/{cache,processed,datasets}/                            (git-ignored, regenerated)
 models/release/       released CNN + baseline + card        (committed)
-reports/full/         metrics, predictions, figures, RESULTS.md (auto-generated), model selection, reconciliation
+reports/full/         metrics, predictions, figures, RESULTS.md (auto-generated), model selection, reconciliation,
+                      dr25_koi_check/ (cached DR25 KOI/TCE rows, provenance, match evidence)
 docs/                 RESULTS_REPORT.md, WALKTHROUGH.md, EVALUATION_PROTOCOL.md, figures
+scripts/              walkthrough figures; check_dr25_koi.py (DR25 KOI cross-check of the error analysis)
 tests/                pytest suite
 ```
 

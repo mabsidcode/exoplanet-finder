@@ -73,8 +73,10 @@ See [`reports/full/RESULTS.md`](reports/full/RESULTS.md) and the Results section
 * **Training instability**: one of three seeds (seed 1) plateaued early (test AP 0.869 vs 0.908 and 0.913), so a
   single retrained model may perform noticeably differently.
 * **Light-curve-only blind spot**: AFPs identified from centroid shifts or contaminating neighbours can look like
-  clean transits and receive high scores. We suspect this explains the highest-scoring test AFPs, but have not
-  checked it against catalogue diagnostics.
+  clean transits and receive high scores. Later-catalogue context (DR25 KOI flags, matched by star, period and
+  epoch): one of the two highest-scoring test AFPs carries the DR25 centroid-offset flag. The other is a DR25
+  candidate, now the confirmed planet Kepler-529 d, so that error is a DR24/DR25 label disagreement. See
+  `reports/full/dr25_koi_check/RESULTS.md`.
 * **Score is uncalibrated** (test Brier 0.052, for reference only). Scores near the threshold should be treated as uncertain.
 
 ## Distribution limits

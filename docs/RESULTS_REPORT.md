@@ -123,24 +123,73 @@ U and secondary eclipses matters most.
 
 ![Examples](../reports/full/figures/error_analysis_examples.png)
 
-The scores, periods, depths and SNRs below are measured. The **explanations are hypotheses** based on looking at
-the model's input views. They have **not** been checked against catalogue evidence such as the DR24/DR25
-centroid-offset statistics or the KOI false-positive flags.
+The scores, periods, depths and SNRs below are measured. The explanations started as hypotheses from looking at
+the model's input views. They were then checked against **later-catalogue context**: the Kepler **DR25** KOI
+vetting flags (NASA Exoplanet Archive `q1_q17_dr25_koi`; DR25 TCEs for the same stars from `q1_q17_dr25_tce`).
+This changes no label, split, model or metric: the task remains reproducing **DR24** dispositions.
 
-* **High-scoring AFPs** (`010587105_03` score 0.999; `010470206_01` 0.996) show clean, flat-bottomed transits and no
-  visible secondary eclipse. *Hypothesis:* their AFP labels rest on evidence the model never sees, such as centroid
-  shifts or a nearby contaminating star. If so, this is an inherent limit of light-curve-only vetting.
-* **Low-scoring PCs** (`008822421_01`, P = 1.65 d; `009047416_01`, P = 9.0 d) show large residual stellar variability
-  in the global view after detrending, and the transit is small by comparison (measured SNR 9.5 and 6.5).
-  `005785279_01` is a 66 ppm signal with SNR 11. *Hypothesis:* variability on time scales close to the 1.5-day spline
-  knot spacing or the orbital period is not removed by the spline, so these are preprocessing or SNR failures rather
-  than shape-learning failures. This was not tested, for example by re-scoring with different detrending.
-* **High-scoring NTP** (`008231830_01`, 0.771): a 55 ppm, SNR 11.5 signal. *Hypothesis:* it is mostly noise, and a
-  chance dip near phase 0 looks transit-like.
-* **Correct rejections**: `002445134_02`'s global view shows a deeper eclipse at phase ±0.5 than at phase 0. That
-  pattern is *consistent with* the TCE being the secondary eclipse of an eclipsing binary. `004678875_02` has a
-  0.63-day period with a smooth, wide dip, *consistent with* stellar variability.
-* **Borderline** cases at score 0.676 include a deep (7,000 ppm), short PC whose local view is asymmetric.
+**How TCEs were matched.** A DR24 TCE is matched to a DR25 KOI only if the KOI is on the same star, has the same
+period (within 0.1%), and its predicted transit times stay within half a DR24 transit duration of the TCE's
+throughout the Kepler mission. Integer period ratios are recorded as aliases, never as matches. The rule,
+per-example evidence (period ratio, phase offset, maximum separation), cached catalogue responses with SHA-256 and
+retrieval time, and flag definitions are in
+[`reports/full/dr25_koi_check/RESULTS.md`](../reports/full/dr25_koi_check/RESULTS.md). Regenerate it with
+`python scripts/check_dr25_koi.py`. "DR25 disposition" below means `koi_pdisposition`, the uniform automated
+DR25 vetting result. "Archive status" means the Exoplanet Archive's current `koi_disposition`, which includes
+later confirmations.
+
+| DR24 TCE | DR24 label · CNN score | DR25 KOI match | DR25 disposition · flags | does it support the explanation? |
+|---|---|---|---|---|
+| `010587105_03` | AFP · 0.999 | K00339.03 | CANDIDATE, no FP flags; archive: CONFIRMED (Kepler-529 d) | **no** |
+| `010470206_01` | AFP · 0.996 | K00335.01 | FALSE POSITIVE · Centroid Offset | **yes** |
+| `008822421_01` | PC · 0.000 | K06188.01 | FALSE POSITIVE · Not Transit-Like (`SWEET_NTL`) | **partly** |
+| `009047416_01` | PC · 0.000 | unresolved (same-period KOI K05605.01, epoch only within uncertainties) | — | unresolved |
+| `005785279_01` | PC · 0.000 | unresolved (same-period KOI K04259.01 drifts 1.9 h) | — | unresolved |
+| `008231830_01` | NTP · 0.771 | unresolved (no DR25 KOI or TCE on the star) | — | unresolved |
+| `002445134_02` | AFP · 0.000 | unresolved (no KOI for this TCE) | related KOI: FALSE POSITIVE · Stellar Eclipse, `HAS_SEC_TCE` | unresolved, indirect support |
+| `004678875_02` | NTP · 0.000 | unresolved (only KOI is at 3× the period) | related KOI: FALSE POSITIVE · Stellar Eclipse, `SWEET_EB` | unresolved, points elsewhere |
+| `006611330_01` | PC · 0.676 | K01691.01 | FALSE POSITIVE · Stellar Eclipse (`DEEP_V_SHAPED`) | context only |
+
+* **High-scoring AFPs.** The hypothesis was that their AFP labels rest on evidence the model never sees, such as
+  centroid shifts. The evidence is **mixed**:
+  * `010470206_01` (0.996): DR25 marks it a false positive with the **Centroid Offset** flag, i.e. the signal
+    comes from a nearby star. This **supports** the hypothesis; a light curve alone cannot show it.
+  * `010587105_03` (0.999): DR25 lists it as a **candidate with no false-positive flags**. The Exoplanet Archive
+    now lists it as the confirmed planet Kepler-529 d. This **does not support** the hypothesis. Instead, the later
+    catalogue disagrees with the DR24 AFP label, and the CNN's high score agrees with the later catalogue. We did
+    not investigate why DR24 labelled it AFP.
+* **Low-scoring PCs.** These show large residual stellar variability after detrending (measured SNR 9.5, 6.5 and
+  11 for `008822421_01`, `009047416_01`, `005785279_01`; the last is a 66 ppm signal). The hypothesis was a
+  detrending or SNR failure rather than a shape-learning failure.
+  * `008822421_01`: DR25 marks it a false positive, **Not Transit-Like**, with `SWEET_NTL`: a sinusoid at the
+    TCE period larger than the dip. This **partly supports** the hypothesis, since DR25 also attributes the signal
+    to variability. But DR25 calls the signal itself not transit-like, so under the later catalogue the low score is
+    agreement, not a detrending failure.
+  * `009047416_01` and `005785279_01` are **unresolved**. Each star has one same-period KOI (both DR25 candidates
+    without false-positive flags), but the epochs agree only within large uncertainties. KOI flags do not test
+    detrending in any case, so the hypothesis remains unverified.
+* **High-scoring NTP** `008231830_01` (0.771): a 55 ppm, SNR 11.5 signal. Hypothesis: mostly noise, with a
+  chance dip near phase 0 looking transit-like. **Unresolved**: the star has no DR25 KOI and no DR25 TCE at all.
+  The signal not being detected again in DR25 is consistent with a spurious signal, but it is not vetting
+  evidence.
+* **Correct rejections.**
+  * `002445134_02`: its global view shows a deeper eclipse at phase ±0.5 than at phase 0, suggesting it is the
+    secondary eclipse of an eclipsing binary. No DR25 KOI matches it (**unresolved**), but the indirect evidence
+    is consistent. The star's only KOI, K05983.01, has the same period at the opposite phase (offset +0.499) and is
+    a false positive with the **Stellar Eclipse** flag and `HAS_SEC_TCE`. The star's only other DR25 TCE has
+    exactly this TCE's ephemeris, so it is the signal the DR25 Robovetter identified as that eclipse's secondary.
+  * `004678875_02` (0.63-day smooth, wide dip): the hypothesis was stellar variability. **Unresolved**: no DR25
+    KOI or TCE exists near 0.626 d. The star's only KOI, K03664.01, has **exactly 3×** this period (1.879 d) and
+    is a false-positive eclipsing binary (Stellar Eclipse flag, `SWEET_EB`). The signal is more plausibly a
+    1/3-period harmonic of that binary than independent variability, but this is not verified.
+* **Borderline** cases at score 0.676 include `006611330_01`, a deep (7,000 ppm), short DR24 PC whose local view
+  is asymmetric. No explanation was proposed. As context, DR25 classifies it as a false positive with the
+  **Stellar Eclipse** flag (`DEEP_V_SHAPED`), so the later catalogue disagrees with its DR24 PC label.
+
+**What this means for the metrics.** Three of the nine examples above (`010587105_03`, `008822421_01`,
+`006611330_01`) have DR24 labels that DR25 later contradicts. Some test "errors" may therefore be label
+disagreements rather than model errors. We did **not** re-score the test set against DR25: all metrics remain
+measured against DR24 labels, as specified in the evaluation protocol.
 
 ## 8. Kepler-90 demonstration (decided before training; frozen model)
 

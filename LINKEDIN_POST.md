@@ -1,6 +1,7 @@
 # LinkedIn draft (for your review; edit freely before posting)
 
-Every number below comes from `reports/full/metrics.json` and `docs/RESULTS_REPORT.md`. Please re-check them if you
+Every number below comes from `reports/full/metrics.json` and `docs/RESULTS_REPORT.md`; DR25 statements come from
+`reports/full/dr25_koi_check/RESULTS.md`. Please re-check them if you
 re-run anything.
 
 ---
@@ -25,7 +26,7 @@ What I learned:
 → Accuracy can lie. A model that always says "not a planet" is 77% accurate here and completely useless.
 → Leakage hides in the data structure. One star can have several signals, so I split by star: otherwise the test set would contain stars the model had already seen.
 → Seeds matter. My three training runs scored 0.908, 0.869 and 0.913, so I report all of them instead of the best one.
-→ The model's confident mistakes taught me the most. Some catalogue "false positives" look like clean transits to the model. My working hypothesis is that they were flagged using evidence a light curve can't show, such as pixel-level centroid shifts, but I haven't yet checked that against the catalogue's diagnostics.
+→ The model's confident "mistakes" taught me the most. I checked them against NASA's later DR25 catalogue, matching each signal by star, period and timing. Its top-scoring "false positive" is a DR25 candidate, now a confirmed planet (Kepler-529 d). The next one was flagged in DR25 for a centroid offset: the dip comes from a neighbouring star, which a light curve alone can't reveal. And the planet candidate it scored lowest was later flagged as not transit-like, dominated by sinusoidal stellar variability. So some "errors" are really disagreements between catalogue releases. (My metrics still use the original DR24 labels.)
 
 The code, model card and a beginner walkthrough are in the repo [add link]. Huge credit to Shallue & Vanderburg (arXiv:1712.05044), the AstroNet code from Google Research, and NASA's Exoplanet Archive and MAST for making all this data public.
 
@@ -53,8 +54,10 @@ The code, model card and a beginner walkthrough are in the repo [add link]. Huge
 5. **Score (10 s)**: 0.982 vs threshold 0.671. Read the caveat aloud: a score is not a confirmation.
 6. **Kepler-90 i (10 s)**: switch to it and, in *Folded transit*, show the ~116 ppm dip in the binned median that
    only appears after folding 74 transits.
-7. **Honest failure (10 s)**: pick *Test PC with the lowest CNN score* and show the residual stellar variability
-   left after detrending. Present it as the likely reason for the low score (a hypothesis from the views, not a
-   checked fact).
+7. **"Failure" with a twist (10 s)**: pick *Test PC with the lowest CNN score* (`008822421_01`) and show the
+   residual stellar variability left after detrending. Later-catalogue context: DR25 classifies this signal as a
+   false positive, not transit-like (sinusoidal variability larger than the dip), so the low score agrees with the
+   later catalogue. Optionally show *Test AFP with the highest CNN score* (`010587105_03`): a DR24 AFP that DR25
+   lists as a candidate, now the confirmed planet Kepler-529 d. The app still shows the DR24 labels.
 8. **Measured results page (10 s)**: PR curve vs baselines and seed variation.
 9. **Close (5 s)**: credit Shallue & Vanderburg and NASA, and add the repo link.

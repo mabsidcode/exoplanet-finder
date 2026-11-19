@@ -180,7 +180,10 @@ Vanderburg using such additional analyses, not by the CNN score alone.
   of 0.017, 0.490 and 0.810: in a 2001-bin view of a 331-day orbit, its transit is only ~4 bins wide. That is the
   problem the local view solves.
 * Typical mistakes: AFPs that look like perfect transits, and real candidates on very variable stars, where
-  detrending could not flatten the light curve. A plausible explanation for the first kind, not yet checked against
-  the catalogue, is that those signals were rejected using pixel-level evidence the model never sees.
+  detrending could not flatten the light curve. Checking a few against the later DR25 catalogue gave mixed answers.
+  One high-scoring "false positive" was flagged there for a centroid offset: the signal comes from a neighbouring
+  star, which the model cannot see. Another is a DR25 candidate, now the confirmed planet Kepler-529 d. And the
+  lowest-scoring PC was later flagged as not transit-like (sinusoidal variability), so catalogue labels can disagree
+  ([details](RESULTS_REPORT.md#7-error-analysis-examples-chosen-by-fixed-rules-not-by-hand)).
 
 Full numbers, figures and error analysis: [RESULTS_REPORT.md](RESULTS_REPORT.md).
