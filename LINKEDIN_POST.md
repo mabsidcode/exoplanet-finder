@@ -4,7 +4,12 @@ Every number below comes from `reports/full/metrics.json` and `docs/RESULTS_REPO
 `reports/full/dr25_koi_check/RESULTS.md`. Please re-check them if you
 re-run anything.
 
+Keep the first line when posting the narrated video: the narration was generated on the ElevenLabs free plan, which
+requires "elevenlabs.io" in the title of published content (non-commercial use only).
+
 ---
+
+Exoplanet Finder demo (narration: elevenlabs.io)
 
 In 2017, Christopher Shallue and Andrew Vanderburg trained a neural network on NASA Kepler data and found Kepler-90 i, an eighth planet around a star that already had seven. I wanted to understand how that works, so for my astronomy ML project I rebuilt a smaller version from scratch. 🔭
 

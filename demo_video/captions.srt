@@ -1,0 +1,77 @@
+1
+00:00:00,000 --> 00:00:04,600
+Exoplanet Finder
+A 1D CNN for classifying signals in NASA Kepler light curves
+
+2
+00:00:04,600 --> 00:00:08,967
+Kepler-90 i: a planet already known from published work, used here as a demonstration
+Real Kepler light curve bundled with the app; the Kepler-90 star was held out from training
+
+3
+00:00:08,967 --> 00:00:13,433
+Raw light curve: four years of Kepler brightness measurements
+Kepler-90 i dims its star by only about 116 parts per million, invisible at this scale
+
+4
+00:00:13,433 --> 00:00:20,100
+Folding at the 14.45-day period stacks 74 observed transits on top of each other
+The repeated dips line up, so the transit becomes visible (blue line: binned median)
+
+5
+00:00:20,100 --> 00:00:25,933
+Model input 1, the global view: the whole orbit in 2,001 bins
+It shows structure away from the transit, such as eclipses of a companion star
+
+6
+00:00:25,933 --> 00:00:31,867
+Model input 2, the local view: a close-up of the dip in 201 bins
+The 1D convolutional network reads both views together
+
+7
+00:00:31,867 --> 00:00:37,167
+Model score 0.987, above the validation-selected threshold of 0.671
+The threshold was chosen on validation data, never on the test set
+
+8
+00:00:37,167 --> 00:00:41,367
+Scores indicate resemblance to labelled planet candidates
+Not a probability, and not a planet confirmation
+
+9
+00:00:41,367 --> 00:00:47,733
+KIC 10587105 TCE 3 is labelled AFP (astrophysical false positive) in Kepler DR24
+The model scores it 0.999, so the DR24-based benchmark counts it as an error
+
+10
+00:00:47,733 --> 00:00:52,333
+Later DR25 vetting lists the matched KOI K00339.03 as CANDIDATE
+NASA Exoplanet Archive, Planetary Systems table: confirmed planet Kepler-529 d
+
+11
+00:00:52,333 --> 00:00:56,600
+Later-catalogue context only: the evaluation still uses the original DR24 labels
+Matched by star, period and transit timing; catalogues checked 19 Nov 2026
+
+12
+00:00:56,600 --> 00:01:02,633
+Evaluation: 2,362 test signals from 1,481 held-out host stars
+Splits are grouped by host star, so no star appears in both training and test
+
+13
+00:01:02,633 --> 00:01:09,933
+Average precision (AP) on the test set: CNN 0.913 vs gradient-boosting baseline 0.873
+Precision–recall curve; random ranking would score about 0.23, the planet-candidate share
+
+14
+00:01:09,933 --> 00:01:12,533
+Open source on GitHub
+Code, trained model, evaluation and a beginner walkthrough
+
+15
+00:01:12,533 --> 00:01:18,333
+Built by Muhammad Abu Bakr Siddique · Code, trained model and evaluation
+https://github.com/mabsidcode/exoplanet-finder
+Data: NASA Kepler mission, via MAST and the NASA Exoplanet Archive
+Inspired by Shallue & Vanderburg (2018), AstroNet
+

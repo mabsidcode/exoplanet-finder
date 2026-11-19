@@ -39,3 +39,9 @@ reports/figures/*.html
 
 # Smoke-run reports are regenerated locally and not meaningful results
 reports/quickstart/
+
+# Demo video: recordings, intermediate frames and the exported video are local only
+demo_video/build/
+demo_video/*.mp4
+demo_video/*.mov
+demo_video/streamlit_8650.log

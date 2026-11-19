@@ -1,0 +1,88 @@
+1
+00:00:00,480 --> 00:00:05,019
+Exoplanet Finder is a PyTorch model that scores possible planet signals
+
+2
+00:00:05,019 --> 00:00:07,547
+in NASA Kepler light curves.
+
+3
+00:00:07,547 --> 00:00:12,013
+Here's Kepler-90 i, a known planet we use as a demo.
+
+4
+00:00:12,013 --> 00:00:14,080
+Four years of Kepler data:
+
+5
+00:00:14,080 --> 00:00:18,380
+the planet's dip is only about 116 parts per million.
+
+6
+00:00:18,380 --> 00:00:23,847
+Folding at the orbital period stacks 74 transits, and the dip appears.
+
+7
+00:00:23,847 --> 00:00:28,213
+The network reads the whole orbit, which can reveal eclipsing binaries,
+
+8
+00:00:28,213 --> 00:00:30,497
+and a close-up of the dip.
+
+9
+00:00:32,280 --> 00:00:38,515
+It scores 0.987, above the validation threshold of 0.671:
+
+10
+00:00:38,515 --> 00:00:40,999
+it resembles labelled planet candidates.
+
+11
+00:00:40,999 --> 00:00:44,313
+That's not a probability, or a confirmation.
+
+12
+00:00:44,313 --> 00:00:48,562
+The DR24 training labels call this signal a false positive,
+
+13
+00:00:48,562 --> 00:00:51,663
+yet it scores 0.999.
+
+14
+00:00:51,663 --> 00:00:54,949
+Later DR25 vetting calls it a candidate,
+
+15
+00:00:54,949 --> 00:01:00,893
+and NASA's Exoplanet Archive lists it as confirmed planet Kepler-529 d.
+
+16
+00:01:00,893 --> 00:01:03,863
+The benchmark still counts it as an error.
+
+17
+00:01:03,863 --> 00:01:09,563
+On 2,362 signals from 1,481 unseen stars,
+
+18
+00:01:09,563 --> 00:01:14,184
+the CNN reaches an average precision of 0.913,
+
+19
+00:01:14,184 --> 00:01:19,013
+versus 0.873 for a gradient-boosting baseline.
+
+20
+00:01:19,013 --> 00:01:22,813
+The code, trained model and evaluation are on GitHub.
+
+21
+00:01:22,813 --> 00:01:24,508
+Thanks to NASA's Kepler mission
+
+22
+00:01:24,508 --> 00:01:28,273
+and to Shallue and Vanderburg's AstroNet research.
+
