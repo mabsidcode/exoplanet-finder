@@ -23,7 +23,7 @@ Kepler-90 was held out from all training. The model scores both Kepler-90 h (0.9
 
 What I learned:
 → Accuracy can lie. A model that always says "not a planet" is 77% accurate here and completely useless.
-→ Leakage hides in the data structure. One star can have several signals, so splitting by star mattered more than any model tweak.
+→ Leakage hides in the data structure. One star can have several signals, so I split by star: otherwise the test set would contain stars the model had already seen.
 → Seeds matter. My three training runs scored 0.908, 0.869 and 0.913, so I report all of them instead of the best one.
 → The model's confident mistakes taught me the most. Some catalogue "false positives" look like clean transits to the model. My working hypothesis is that they were flagged using evidence a light curve can't show, such as pixel-level centroid shifts, but I haven't yet checked that against the catalogue's diagnostics.
 

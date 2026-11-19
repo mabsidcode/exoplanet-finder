@@ -57,13 +57,14 @@ preprocessing, architecture and no 10-model ensemble.
 
 ## Quick start
 
-Requirements: Python ≥ 3.11 (developed and tested on 3.14.7, macOS / Apple M5). CPU works; Apple MPS or CUDA are used
+Requirements: Python 3.11–3.14 (developed and tested on 3.14.7, macOS / Apple M5). Python 3.15 is not supported yet
+because `astropy` publishes no 3.15 wheels, so pip would try to compile it. CPU works; Apple MPS or CUDA are used
 automatically when available. No paid services or API keys. The demo needs **no dataset download**: the release model
 (`models/release/`) and seven real Kepler light curves (`app/examples/`) are committed (repository ≈ 30 MB).
 
 ```bash
 git clone <repository-url> exoplanet-finder && cd exoplanet-finder
-python3 -m venv .venv && source .venv/bin/activate
+python3.14 -m venv .venv && source .venv/bin/activate   # or any Python 3.11–3.14
 pip install -e ".[dev]"            # exact versions used: requirements-lock.txt
 
 # Demo with the committed release model and bundled real Kepler light curves (offline):

@@ -9,7 +9,8 @@ description = "Exoplanet Finder: an AstroNet-inspired 1D CNN that scores Kepler 
 readme = "README.md"
 license = "Apache-2.0"
 authors = [{ name = "Muhammad Abu Bakr Siddique" }]
-requires-python = ">=3.11"
+# <3.15: astropy (and so lightkurve) has no Python 3.15 wheels yet, so pip would try a long source build
+requires-python = ">=3.11,<3.15"
 dependencies = [
   "numpy>=2.0",
   "pandas>=2.2",
