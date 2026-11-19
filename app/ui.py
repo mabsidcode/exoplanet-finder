@@ -46,6 +46,7 @@ h1, h2, h3 {letter-spacing: 0.01em;}
       border: 1px solid #2c3755; color: #c9d3ea;}
 .tag.cat {border-color: #6b5a2e; color: #f2d79b;}
 .tag.model {border-color: #2e4a7a; color: #b8cdfa;}
+.tag.warn {border-color: #7a5a2e; color: #f2b866;}
 .small {color: #8a93a8; font-size: 0.85rem;}
 </style>
 """
@@ -88,6 +89,47 @@ def sample_csv_bytes(npz_name: str) -> bytes:
 def load_examples() -> dict | None:
     p = EXAMPLES_DIR / "examples.json"
     return json.loads(p.read_text()) if p.exists() else None
+
+
+@st.cache_data
+def load_later_catalogue() -> dict:
+    """Verified DR25 / Archive context for the bundled examples (scripts/check_dr25_koi.py); empty if absent."""
+    p = EXAMPLES_DIR / "later_catalogue.json"
+    return json.loads(p.read_text()) if p.exists() else {"examples": {}}
+
+
+def later_catalogue_html(ctx: dict | None, unresolved_text: str) -> str | None:
+    """Card body for one example's later-catalogue context, or None when there is nothing to show."""
+    from html import escape
+
+    if not ctx:
+        return None
+    lab = ctx.get("dr24_label")
+    lines = [f"Original DR24 training label: <b>{escape(lab)}</b> "
+             f"<span class='small'>(Kepler DR24 <code>av_training_set</code>; used for training and evaluation)</span>"
+             if lab else "Original DR24 training label: <b>none</b> <span class='small'>(not a DR24 TCE)</span>"]
+    d = ctx.get("dr25")
+    if d:
+        flags = f" · false-positive flags: {escape(', '.join(d['fp_flags']))}" if d["fp_flags"] else ""
+        lines.append(
+            f"DR25 KOI <code>{escape(d['kepoi_name'])}</code>: <b>{escape(d['disposition'])}</b>{flags}<br>"
+            f"<span class='small'>Source: {escape(d['source']['table'])}, {escape(d['source']['column'])}; retrieved "
+            f"{d['source']['retrieved_utc'][:10]}. Matched by {escape(d['match_evidence'])}.</span>")
+    else:
+        reason = ctx.get("unresolved_reason")
+        lines.append(f"DR25 KOI: <b>{escape(unresolved_text)}</b>"
+                     + (f" <span class='small'>({escape(reason)})</span>" if reason else ""))
+    a = ctx.get("archive")
+    if a:
+        alias = f" (Archive name {escape(a['pl_name'])})" if a["pl_name"] != a["kepler_name"] else ""
+        lines.append(
+            f"NASA Exoplanet Archive status: <b>{escape(a['status'])}</b>, {escape(a['kepler_name'])}{alias}<br>"
+            f"<span class='small'>Source: {escape(a['source']['table'])}; retrieved {a['source']['retrieved_utc'][:10]}. "
+            f"{escape(a['cross_id'])}; {escape(a['evidence'])}. Discovery reference: "
+            f"{escape(a['discovery_reference'].split(' (')[0])}.</span>")
+    if ctx.get("disagreement"):
+        lines.append(f"<span class='tag warn'>Labels disagree</span> {escape(ctx['disagreement'])}")
+    return "".join(f"<div style='margin-bottom:0.6rem'>{x}</div>" for x in lines)
 
 
 @st.cache_data

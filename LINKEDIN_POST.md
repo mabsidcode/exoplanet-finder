@@ -26,7 +26,7 @@ What I learned:
 → Accuracy can lie. A model that always says "not a planet" is 77% accurate here and completely useless.
 → Leakage hides in the data structure. One star can have several signals, so I split by star: otherwise the test set would contain stars the model had already seen.
 → Seeds matter. My three training runs scored 0.908, 0.869 and 0.913, so I report all of them instead of the best one.
-→ The model's confident "mistakes" taught me the most. I checked them against NASA's later DR25 catalogue, matching each signal by star, period and timing. Its top-scoring "false positive" is a DR25 candidate, now a confirmed planet (Kepler-529 d). The next one was flagged in DR25 for a centroid offset: the dip comes from a neighbouring star, which a light curve alone can't reveal. And the planet candidate it scored lowest was later flagged as not transit-like, dominated by sinusoidal stellar variability. So some "errors" are really disagreements between catalogue releases. (My metrics still use the original DR24 labels.)
+→ The model's confident "mistakes" taught me the most. I checked them against NASA's later DR25 catalogue, matching each signal by star, period and timing. Its top-scoring "false positive" is a planet candidate in DR25, and NASA's Exoplanet Archive now lists it as the confirmed planet Kepler-529 d. The next one was flagged in DR25 for a centroid offset: the dip comes from a neighbouring star, which a light curve alone can't reveal. And the planet candidate it scored lowest was later flagged as not transit-like, dominated by sinusoidal stellar variability. So some "errors" are really disagreements between catalogue releases. (My metrics still use the original DR24 labels.)
 
 The code, model card and a beginner walkthrough are in the repo [add link]. Huge credit to Shallue & Vanderburg (arXiv:1712.05044), the AstroNet code from Google Research, and NASA's Exoplanet Archive and MAST for making all this data public.
 
@@ -54,10 +54,14 @@ The code, model card and a beginner walkthrough are in the repo [add link]. Huge
 5. **Score (10 s)**: 0.982 vs threshold 0.671. Read the caveat aloud: a score is not a confirmation.
 6. **Kepler-90 i (10 s)**: switch to it and, in *Folded transit*, show the ~116 ppm dip in the binned median that
    only appears after folding 74 transits.
-7. **"Failure" with a twist (10 s)**: pick *Test PC with the lowest CNN score* (`008822421_01`) and show the
-   residual stellar variability left after detrending. Later-catalogue context: DR25 classifies this signal as a
-   false positive, not transit-like (sinusoidal variability larger than the dip), so the low score agrees with the
-   later catalogue. Optionally show *Test AFP with the highest CNN score* (`010587105_03`): a DR24 AFP that DR25
-   lists as a candidate, now the confirmed planet Kepler-529 d. The app still shows the DR24 labels.
+7. **A "mistake" that wasn't (15 s)**: pick *KIC 10587105 TCE 3 (AFP)*, the test AFP with the highest CNN score
+   (0.999). Read the *Later catalogues* card top to bottom, keeping each source distinct:
+   * the DR24 training label is **AFP**, so the evaluation counts 0.999 as a false positive;
+   * DR25 KOI K00339.03's disposition is **CANDIDATE** (from the DR25 KOI table, `koi_pdisposition`);
+   * the NASA Exoplanet Archive's Planetary Systems table lists it as **confirmed planet Kepler-529 d**
+     (retrieved 2026-11-19).
+
+   Say: "the model disagreed with the label it was trained on, and a later catalogue sided with the model. The metrics
+   still count this as an error, because they use DR24 labels." Do not claim that the model discovered the planet.
 8. **Measured results page (10 s)**: PR curve vs baselines and seed variation.
 9. **Close (5 s)**: credit Shallue & Vanderburg and NASA, and add the repo link.

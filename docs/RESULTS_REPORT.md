@@ -135,8 +135,10 @@ per-example evidence (period ratio, phase offset, maximum separation), cached ca
 retrieval time, and flag definitions are in
 [`reports/full/dr25_koi_check/RESULTS.md`](../reports/full/dr25_koi_check/RESULTS.md). Regenerate it with
 `python scripts/check_dr25_koi.py`. "DR25 disposition" below means `koi_pdisposition`, the uniform automated
-DR25 vetting result. "Archive status" means the Exoplanet Archive's current `koi_disposition`, which includes
-later confirmations.
+DR25 vetting result. "Archive status" is shown only where verified independently of the KOI table. The Archive's
+`keplernames` cross-ID table (KIC ID + KOI ID) gives the planet name. The default parameter set of the Planetary
+Systems table (`ps`) must then be "Published Confirmed", with a matching period, and matching transit times when
+that row gives them.
 
 | DR24 TCE | DR24 label · CNN score | DR25 KOI match | DR25 disposition · flags | does it support the explanation? |
 |---|---|---|---|---|
@@ -154,8 +156,10 @@ later confirmations.
   centroid shifts. The evidence is **mixed**:
   * `010470206_01` (0.996): DR25 marks it a false positive with the **Centroid Offset** flag, i.e. the signal
     comes from a nearby star. This **supports** the hypothesis; a light curve alone cannot show it.
-  * `010587105_03` (0.999): DR25 lists it as a **candidate with no false-positive flags**. The Exoplanet Archive
-    now lists it as the confirmed planet Kepler-529 d. This **does not support** the hypothesis. Instead, the later
+  * `010587105_03` (0.999): DR25 lists it as a **candidate with no false-positive flags**. The Archive's
+    Planetary Systems table lists it as the confirmed planet Kepler-529 d (cross-ID K00339.03 → Kepler-529 d; the
+    default parameter set, from Valizadegan et al. 2022, gives no transit epoch, so only the period was compared:
+    35.8662 vs 35.8656 d). This **does not support** the hypothesis. Instead, the later
     catalogue disagrees with the DR24 AFP label, and the CNN's high score agrees with the later catalogue. We did
     not investigate why DR24 labelled it AFP.
 * **Low-scoring PCs.** These show large residual stellar variability after detrending (measured SNR 9.5, 6.5 and
@@ -195,8 +199,13 @@ measured against DR24 labels, as specified in the evaluation protocol.
 
 | signal | catalogue status | release CNN score | above 0.671? | HGB baseline |
 |---|---|---|---|---|
-| Kepler-90 h, DR24 TCE `011442793_01` | DR24 label PC; confirmed planet in later catalogues | **0.982** | yes | 0.523 (below 0.626) |
+| Kepler-90 h, DR24 TCE `011442793_01` | DR24 label PC; DR25 KOI K00351.01 is a DR25 **FALSE POSITIVE** (stellar-eclipse flag); the Archive's Planetary Systems table lists it as a confirmed planet (Archive name KOI-351 h) | **0.982** | yes | 0.523 (below 0.626) |
 | Kepler-90 i, P = 14.44912 d, T₀ = BJD 2455644.3488, D = 2.80 h | Validated planet (Shallue & Vanderburg 2018, FPP ≈ 0.005); **not a DR24 TCE** | **0.987** | yes | not computed |
+
+Later-catalogue context for Kepler-90 h: DR25's automated vetting flagged a significant secondary event
+(`MOD_SEC_DV`, `MOD_SEC_ALT`) and labelled it a false positive, yet the Archive lists it as a confirmed planet. DR25's
+automated dispositions are therefore not ground truth either. Kepler-90 i has no DR25 KOI with a matching
+ephemeris (the match is unresolved). Its confirmed status is verified in `ps` against the ephemeris used here.
 
 Kepler-90 i's measured local-view depth is about 116 ppm with SNR ≈ 13 from 74 observed transits. The CNN score says
 its folded signal resembles DR24 planet candidates. That agrees with, but does not independently re-establish,

@@ -1,5 +1,5 @@
 {
-  "matching_rule": "(uses only periods and epochs, never flags; a star-ID match alone is never enough)\n------------------------------------------------------------------------------------------------\nWritten after a first look at the queried catalogue rows, so it is not a blind pre-registration; it is\ndeliberately conservative (anything ambiguous stays unresolved).\nFor a DR24 TCE with period P, epoch T0 and duration D, and each DR25 KOI (or TCE) on the same KIC star:\n\n1. Period: ``r = P_dr25 / P``. Same period if ``|r - 1| <= 1e-3``. If ``r`` or ``1/r`` is within 0.1% of an integer\n   2..5 the object is recorded as a *period alias*, which is never a match.\n2. Epoch: for same-period objects, every DR24-predicted transit in the Kepler baseline (BKJD 120-1600) is compared\n   with the nearest DR25-predicted transit. ``max_sep_h`` is the largest separation; ``phase_offset`` is the epoch\n   offset as a fraction of the period (0.5 = the other object sits at the opposite phase, e.g. a secondary eclipse).\n3. Compatible if ``max_sep_h <= 0.5 * D`` (transit centres stay within half a DR24 duration for the whole mission).\n4. Exactly one compatible KOI = **matched**. No compatible KOI = **unresolved (no matching KOI)**. Several =\n   **unresolved (ambiguous)**. A same-period KOI whose epoch is incompatible is reported as such; if it is within\n   3 combined (propagated) standard errors the case is **unresolved (low-precision ephemeris)**.",
+  "matching_rule": "(uses only periods and epochs, never flags; a star-ID match alone is never enough)\n------------------------------------------------------------------------------------------------\nWritten after a first look at the queried catalogue rows, so it is not a blind pre-registration; it is\ndeliberately conservative (anything ambiguous stays unresolved).\nFor a DR24 TCE with period P, epoch T0 and duration D, and each DR25 KOI (or TCE) on the same KIC star:\n\n1. Period: ``r = P_dr25 / P``. Same period if ``|r - 1| <= 1e-3``. If ``r`` or ``1/r`` is within 0.1% of an integer\n   2..5 the object is recorded as a *period alias*, which is never a match.\n2. Epoch: for same-period objects, every DR24-predicted transit in the Kepler baseline (BKJD 120-1600) is compared\n   with the nearest DR25-predicted transit. ``max_sep_h`` is the largest separation; ``phase_offset`` is the epoch\n   offset as a fraction of the period (0.5 = the other object sits at the opposite phase, e.g. a secondary eclipse).\n3. Compatible if ``max_sep_h <= 0.5 * D`` (transit centres stay within half a DR24 duration for the whole mission).\n4. Exactly one compatible KOI = **matched**. No compatible KOI = **unresolved (no matching KOI)**. Several =\n   **unresolved (ambiguous)**. A same-period KOI whose epoch is incompatible is reported as such; if it is within\n   3 combined (propagated) standard errors the case is **unresolved (low-precision ephemeris)**.\n\nArchive status (e.g. \"confirmed planet\") is shown only when verified independently of the KOI table's own\n``koi_disposition`` column (which is recorded but never displayed as verified status):\n\na. ``keplernames`` has a row with the same KIC ID and the matched KOI's identifier (for Kepler-90 i, which has no\n   KOI, the same KIC ID and its Kepler name), giving the Archive planet name ``pl_name``;\nb. the ``ps`` default parameter set for that ``pl_name`` has ``soltype`` \"Published Confirmed\";\nc. its period matches the KOI's (Kepler-90 i: the example's) within 0.1%, and, when that row gives a transit\n   midpoint, its transit times stay within half the KOI duration over the mission. When the default row gives no\n   midpoint, this is stated with the status.\n\nAmendment, made after the first ``ps`` query and before writing the demo cards: the first version looked planets up\nby ``kepler_name`` and required a midpoint. That missed Kepler-90 h (Archive name \"KOI-351 h\") and Kepler-529 d\n(its default row, Valizadegan et al. 2022, gives a period but no midpoint). The cross-ID table replaces the name\nlookup; the midpoint requirement became \"check it when given, otherwise say so\".",
   "flag_meanings": {
     "koi_fpflag_nt": "Not Transit-Like: light curve not consistent with a transiting planet",
     "koi_fpflag_ss": "Stellar Eclipse: significant secondary event, transit shape or out-of-eclipse variability",
@@ -11,22 +11,37 @@
     "SWEET_EB": "significant sinusoidal out-of-eclipse variability smaller than the depth (stellar eclipse)",
     "DEEP_V_SHAPED": "too deep and too V-shaped for a planet (stellar eclipse)",
     "HAS_SEC_TCE": "a subsequent TCE on the same star at the same period was identified as this signal's secondary",
-    "MOD_SEC_ALT": "significant secondary event in the model-shift test (alternate detrending)"
+    "MOD_SEC_ALT": "significant secondary event in the model-shift test (alternate detrending)",
+    "MOD_SEC_DV": "significant secondary event in the model-shift test (DV detrending)"
   },
   "sources": {
     "dr25_koi.csv": {
       "tap_url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync",
-      "query": "select kepid,kepoi_name,kepler_name,koi_disposition,koi_pdisposition,koi_score,koi_fpflag_nt,koi_fpflag_ss,koi_fpflag_co,koi_fpflag_ec,koi_comment,koi_period,koi_period_err1,koi_time0bk,koi_time0bk_err1,koi_duration,koi_depth,koi_tce_plnt_num,koi_tce_delivname from q1_q17_dr25_koi where kepid in (2445134,4678875,5785279,6611330,7898352,8231830,8822421,9047416,10352333,10470206,10587105,11342416) order by kepid,kepoi_name",
-      "retrieved_utc": "2026-11-19T10:56:01+00:00",
-      "sha256": "9970ee2527a5a5d0497d5a4fc6782b7fc8dd4e79a789b7fe3f550b2b4a2214d2",
-      "n_rows": 14
+      "query": "select kepid,kepoi_name,kepler_name,koi_disposition,koi_pdisposition,koi_score,koi_fpflag_nt,koi_fpflag_ss,koi_fpflag_co,koi_fpflag_ec,koi_comment,koi_period,koi_period_err1,koi_time0bk,koi_time0bk_err1,koi_duration,koi_depth,koi_tce_plnt_num,koi_tce_delivname from q1_q17_dr25_koi where kepid in (2445134,4678875,5785279,6611330,7898352,8231830,8822421,9047416,10352333,10470206,10587105,11342416,11442793) order by kepid,kepoi_name",
+      "retrieved_utc": "2026-11-19T11:13:46+00:00",
+      "sha256": "212e655ac5eb6bca0f6f95d5bfeaa1bcd4f1ee660f427c27cb60d3d5039e30ae",
+      "n_rows": 21
     },
     "dr25_tce.csv": {
       "tap_url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync",
-      "query": "select kepid,tce_plnt_num,tce_period,tce_period_err,tce_time0bk,tce_time0bk_err,tce_duration,tce_depth,tce_model_snr from q1_q17_dr25_tce where kepid in (2445134,4678875,5785279,6611330,7898352,8231830,8822421,9047416,10352333,10470206,10587105,11342416) order by kepid,tce_plnt_num",
-      "retrieved_utc": "2026-11-19T10:56:02+00:00",
-      "sha256": "19dad91f47c8e3d6ddb9e5e9852a4d994c1fe87b52cd66c521f4661c4df1b8c5",
-      "n_rows": 18
+      "query": "select kepid,tce_plnt_num,tce_period,tce_period_err,tce_time0bk,tce_time0bk_err,tce_duration,tce_depth,tce_model_snr from q1_q17_dr25_tce where kepid in (2445134,4678875,5785279,6611330,7898352,8231830,8822421,9047416,10352333,10470206,10587105,11342416,11442793) order by kepid,tce_plnt_num",
+      "retrieved_utc": "2026-11-19T11:13:47+00:00",
+      "sha256": "7f3946fab4b3e1da0692955f4881afeafbed77cd1e0b589ea181a72ef339b9dd",
+      "n_rows": 25
+    },
+    "keplernames.csv": {
+      "tap_url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync",
+      "query": "select kepid,koi_name,kepler_name,pl_name from keplernames where kepid in (2445134,4678875,5785279,6611330,7898352,8231830,8822421,9047416,10352333,10470206,10587105,11342416,11442793) order by kepid,pl_name",
+      "retrieved_utc": "2026-11-19T11:13:48+00:00",
+      "sha256": "aaf42e6047b43cc937517441ebb9ed93dcb839822f7c7195be26bbf9fd8da05b",
+      "n_rows": 14
+    },
+    "ps.csv": {
+      "tap_url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync",
+      "query": "select pl_name,hostname,default_flag,soltype,pl_orbper,pl_orbpererr1,pl_tranmid,pl_tranmiderr1,disc_year,disc_refname,pl_controv_flag,rowupdate from ps where default_flag=1 and pl_name in ('KOI-351 b','KOI-351 c','KOI-351 d','KOI-351 e','KOI-351 f','KOI-351 g','KOI-351 h','Kepler-1209 b','Kepler-302 b','Kepler-302 c','Kepler-529 b','Kepler-529 c','Kepler-529 d','Kepler-90 i') order by pl_name",
+      "retrieved_utc": "2026-11-19T11:13:50+00:00",
+      "sha256": "da0509f1a08139e438513cb099b2a93be3e3170217db3381acbfc128da7efaa1",
+      "n_rows": 14
     }
   },
   "examples": [
@@ -34,6 +49,7 @@
       "category": "true positive: highest-scoring PC",
       "tce_id": "011342416_01",
       "kepid": 11342416,
+      "bundled_example": true,
       "dr24_label": "PC",
       "cnn_score": 0.9995393753051758,
       "dr24_ephemeris": {
@@ -97,6 +113,26 @@
           "compatible": true
         }
       },
+      "archive_status_verified": {
+        "status": "Confirmed planet",
+        "pl_name": "Kepler-1209 b",
+        "kepler_name": "Kepler-1209 b",
+        "soltype": "Published Confirmed",
+        "discovery_reference": "Morton et al. 2016 (https://ui.adsabs.harvard.edu/abs/2016ApJ...822...86M/abstract)",
+        "disc_year": 2016,
+        "cross_id": "keplernames: KIC 11342416 + K02366.01 -> Kepler-1209 b",
+        "evidence": "ps default period 25.3691 d vs 25.3691 d (ratio 1.00000); transit times within 0.05 h over the mission (tolerance 2.37 h)",
+        "match": {
+          "period_ratio": 1.0000011510071383,
+          "alias": null,
+          "same_period": true,
+          "phase_offset": 1.537304123910843e-05,
+          "max_sep_h": 0.049305600423394935,
+          "half_duration_h": 2.373,
+          "sep_over_sigma_at_max": 0.1607310987331751,
+          "compatible": true
+        }
+      },
       "assessment": "no explanation proposed",
       "assessment_note": "Correct PC; DR25 candidate, later confirmed (Kepler-1209 b)."
     },
@@ -104,6 +140,7 @@
       "category": "true positive: highest-scoring PC",
       "tce_id": "007898352_02",
       "kepid": 7898352,
+      "bundled_example": false,
       "dr24_label": "PC",
       "cnn_score": 0.9988600015640259,
       "dr24_ephemeris": {
@@ -189,6 +226,26 @@
           "compatible": true
         }
       },
+      "archive_status_verified": {
+        "status": "Confirmed planet",
+        "pl_name": "Kepler-302 b",
+        "kepler_name": "Kepler-302 b",
+        "soltype": "Published Confirmed",
+        "discovery_reference": "Rowe et al. 2014 (https://ui.adsabs.harvard.edu/abs/2014ApJ...784...45R/abstract)",
+        "disc_year": 2014,
+        "cross_id": "keplernames: KIC 7898352 + K01486.02 -> Kepler-302 b",
+        "evidence": "ps default period 30.1841 d vs 30.1837 d (ratio 1.00001); transit times within 0.30 h over the mission (tolerance 2.94 h)",
+        "match": {
+          "period_ratio": 1.0000133151327384,
+          "alias": null,
+          "same_period": true,
+          "phase_offset": -0.00022164278776137802,
+          "max_sep_h": 0.30242880291552865,
+          "half_duration_h": 2.9395,
+          "sep_over_sigma_at_max": 1.031592511508709,
+          "compatible": true
+        }
+      },
       "assessment": "no explanation proposed",
       "assessment_note": "Correct PC; DR25 candidate, later confirmed (Kepler-302 b)."
     },
@@ -196,6 +253,7 @@
       "category": "true negative: lowest-scoring AFP",
       "tce_id": "002445134_02",
       "kepid": 2445134,
+      "bundled_example": true,
       "dr24_label": "AFP",
       "cnn_score": 0.0,
       "dr24_ephemeris": {
@@ -245,6 +303,7 @@
           "compatible": true
         }
       ],
+      "archive_status_verified": null,
       "related_koi_not_matched": {
         "kepoi_name": "K05983.01",
         "relation": {
@@ -275,6 +334,7 @@
       "category": "true negative: lowest-scoring NTP",
       "tce_id": "004678875_02",
       "kepid": 4678875,
+      "bundled_example": false,
       "dr24_label": "NTP",
       "cnn_score": 0.0,
       "dr24_ephemeris": {
@@ -317,6 +377,7 @@
           "same_period": false
         }
       ],
+      "archive_status_verified": null,
       "related_koi_not_matched": {
         "kepoi_name": "K03664.01",
         "relation": {
@@ -342,6 +403,7 @@
       "category": "false positive: highest-scoring AFP",
       "tce_id": "010587105_03",
       "kepid": 10587105,
+      "bundled_example": true,
       "dr24_label": "AFP",
       "cnn_score": 0.9985607266426086,
       "dr24_ephemeris": {
@@ -433,6 +495,17 @@
           "compatible": true
         }
       },
+      "archive_status_verified": {
+        "status": "Confirmed planet",
+        "pl_name": "Kepler-529 d",
+        "kepler_name": "Kepler-529 d",
+        "soltype": "Published Confirmed",
+        "discovery_reference": "Valizadegan et al. 2022 (https://ui.adsabs.harvard.edu/abs/2022ApJ...926..120V/abstract)",
+        "disc_year": 2021,
+        "cross_id": "keplernames: KIC 10587105 + K00339.03 -> Kepler-529 d",
+        "evidence": "ps default period 35.8662 d vs 35.8656 d (ratio 1.00002); the Archive's default parameter set gives no transit epoch, so only the period was compared",
+        "match": null
+      },
       "assessment": "does not support",
       "assessment_note": "Hypothesis: AFP label rests on centroid or contamination evidence. The matched KOI K00339.03 is a DR25 CANDIDATE with no false-positive flags and is now archive-CONFIRMED (Kepler-529 d). The later catalogue disagrees with the DR24 AFP label, so the high CNN score agrees with it. Why DR24 labelled it AFP was not investigated."
     },
@@ -440,6 +513,7 @@
       "category": "false positive: highest-scoring AFP",
       "tce_id": "010470206_01",
       "kepid": 10470206,
+      "bundled_example": false,
       "dr24_label": "AFP",
       "cnn_score": 0.9960982799530029,
       "dr24_ephemeris": {
@@ -503,6 +577,7 @@
           "compatible": true
         }
       },
+      "archive_status_verified": null,
       "assessment": "supports",
       "assessment_note": "Hypothesis: AFP label rests on centroid or contamination evidence. The matched KOI K00335.01 is a DR25 FALSE POSITIVE with the Centroid Offset flag (signal from a nearby star), which the light curve alone does not show. DR25 disposition score 0.394 (for false positives, higher means less confidence)."
     },
@@ -510,6 +585,7 @@
       "category": "false positive: highest-scoring NTP",
       "tce_id": "008231830_01",
       "kepid": 8231830,
+      "bundled_example": true,
       "dr24_label": "NTP",
       "cnn_score": 0.7709006667137146,
       "dr24_ephemeris": {
@@ -520,6 +596,7 @@
       "status": "unresolved: no DR25 KOI on this star",
       "koi_candidates": [],
       "dr25_tces_on_star": [],
+      "archive_status_verified": null,
       "assessment": "unresolved; not testable with KOI flags",
       "assessment_note": "Hypothesis: mostly noise. No DR25 KOI, and no DR25 TCE at all, on this star. Not being re-detected in DR25 is consistent with a spurious signal but is not vetting evidence."
     },
@@ -527,6 +604,7 @@
       "category": "false negative: lowest-scoring PC",
       "tce_id": "008822421_01",
       "kepid": 8822421,
+      "bundled_example": true,
       "dr24_label": "PC",
       "cnn_score": 8.704406440074308e-08,
       "dr24_ephemeris": {
@@ -590,6 +668,7 @@
           "compatible": true
         }
       },
+      "archive_status_verified": null,
       "assessment": "partly supports",
       "assessment_note": "Hypothesis: residual stellar variability that detrending did not remove. The matched KOI K06188.01 is a DR25 FALSE POSITIVE, Not Transit-Like, SWEET_NTL: a sinusoid at the TCE period larger than the dip. DR25 agrees that variability dominates, but calls the signal itself not transit-like, so under the later catalogue the low score is agreement rather than a detrending failure."
     },
@@ -597,6 +676,7 @@
       "category": "false negative: lowest-scoring PC",
       "tce_id": "009047416_01",
       "kepid": 9047416,
+      "bundled_example": false,
       "dr24_label": "PC",
       "cnn_score": 1.5336720480263466e-06,
       "dr24_ephemeris": {
@@ -633,6 +713,7 @@
           "compatible": false
         }
       ],
+      "archive_status_verified": null,
       "related_koi_not_matched": {
         "kepoi_name": "K05605.01",
         "relation": {
@@ -663,6 +744,7 @@
       "category": "false negative: lowest-scoring PC",
       "tce_id": "005785279_01",
       "kepid": 5785279,
+      "bundled_example": false,
       "dr24_label": "PC",
       "cnn_score": 0.0002940084377769381,
       "dr24_ephemeris": {
@@ -699,6 +781,7 @@
           "compatible": false
         }
       ],
+      "archive_status_verified": null,
       "related_koi_not_matched": {
         "kepoi_name": "K04259.01",
         "relation": {
@@ -729,6 +812,7 @@
       "category": "borderline: closest to threshold",
       "tce_id": "006611330_01",
       "kepid": 6611330,
+      "bundled_example": false,
       "dr24_label": "PC",
       "cnn_score": 0.6759219765663147,
       "dr24_ephemeris": {
@@ -792,6 +876,7 @@
           "compatible": true
         }
       },
+      "archive_status_verified": null,
       "assessment": "no explanation proposed; later-catalogue context",
       "assessment_note": "Described only (deep, short PC with an asymmetric local view). The matched KOI K01691.01 is a DR25 FALSE POSITIVE with the Stellar Eclipse flag (DEEP_V_SHAPED): the later catalogue disagrees with the DR24 PC label."
     },
@@ -799,6 +884,7 @@
       "category": "borderline: closest to threshold",
       "tce_id": "010352333_01",
       "kepid": 10352333,
+      "bundled_example": false,
       "dr24_label": "PC",
       "cnn_score": 0.6763216257095337,
       "dr24_ephemeris": {
@@ -862,8 +948,322 @@
           "compatible": true
         }
       },
+      "archive_status_verified": null,
       "assessment": "no explanation proposed",
       "assessment_note": "Borderline PC; DR25 candidate with no FP flags."
+    },
+    {
+      "category": "bundled example",
+      "tce_id": "011442793_01",
+      "kepid": 11442793,
+      "bundled_example": true,
+      "dr24_label": "PC",
+      "cnn_score": 0.9823470115661621,
+      "dr24_ephemeris": {
+        "period_days": 331.603,
+        "epoch_bkjd": 140.48,
+        "duration_hours": 14.49
+      },
+      "status": "matched",
+      "koi_candidates": [
+        {
+          "kepoi_name": "K00351.01",
+          "period_ratio": 0.9999827299511765,
+          "alias": null,
+          "same_period": true,
+          "phase_offset": 5.7083319511597175e-05,
+          "max_sep_h": 0.4542960000003404,
+          "half_duration_h": 7.245,
+          "sep_over_sigma_at_max": 19.836813930156847,
+          "compatible": true
+        },
+        {
+          "kepoi_name": "K00351.02",
+          "period_ratio": 0.6351009619937094,
+          "alias": null,
+          "same_period": false
+        },
+        {
+          "kepoi_name": "K00351.03",
+          "period_ratio": 0.18014657376441104,
+          "alias": null,
+          "same_period": false
+        },
+        {
+          "kepoi_name": "K00351.04",
+          "period_ratio": 0.27725963064266607,
+          "alias": null,
+          "same_period": false
+        },
+        {
+          "kepoi_name": "K00351.05",
+          "period_ratio": 0.02629590609855761,
+          "alias": null,
+          "same_period": false
+        },
+        {
+          "kepoi_name": "K00351.06",
+          "period_ratio": 0.02113436208357584,
+          "alias": null,
+          "same_period": false
+        },
+        {
+          "kepoi_name": "K00351.07",
+          "period_ratio": 0.37672311770400146,
+          "alias": null,
+          "same_period": false
+        }
+      ],
+      "dr25_tces_on_star": [
+        {
+          "dr25_tce": "011442793_01",
+          "period_days": 331.603,
+          "epoch_bkjd": 140.48,
+          "period_ratio": 1.0,
+          "alias": null,
+          "same_period": true,
+          "phase_offset": 0.0,
+          "max_sep_h": 0.0,
+          "half_duration_h": 7.245,
+          "sep_over_sigma_at_max": 0.0,
+          "compatible": true
+        },
+        {
+          "dr25_tce": "011442793_02",
+          "period_days": 210.593,
+          "epoch_bkjd": 147.099,
+          "period_ratio": 0.6350756778436866,
+          "alias": null,
+          "same_period": false
+        },
+        {
+          "dr25_tce": "011442793_03",
+          "period_days": 59.7369,
+          "epoch_bkjd": 158.962,
+          "period_ratio": 0.18014583704007503,
+          "alias": null,
+          "same_period": false
+        },
+        {
+          "dr25_tce": "011442793_04",
+          "period_days": 91.9395,
+          "epoch_bkjd": 134.307,
+          "period_ratio": 0.2772577449540565,
+          "alias": null,
+          "same_period": false
+        },
+        {
+          "dr25_tce": "011442793_05",
+          "period_days": 124.915,
+          "epoch_bkjd": 254.704,
+          "period_ratio": 0.37670045204657376,
+          "alias": null,
+          "same_period": false
+        },
+        {
+          "dr25_tce": "011442793_06",
+          "period_days": 7.00821,
+          "epoch_bkjd": 137.675,
+          "period_ratio": 0.021134338350376806,
+          "alias": null,
+          "same_period": false
+        },
+        {
+          "dr25_tce": "011442793_07",
+          "period_days": 8.7198,
+          "epoch_bkjd": 139.521,
+          "period_ratio": 0.026295902027424357,
+          "alias": null,
+          "same_period": false
+        }
+      ],
+      "matched_koi": {
+        "kepoi_name": "K00351.01",
+        "kepler_name": "Kepler-90 h",
+        "dr25_disposition": "FALSE POSITIVE",
+        "archive_disposition": "CONFIRMED",
+        "koi_score": 0.0,
+        "flags": {
+          "koi_fpflag_nt": 0,
+          "koi_fpflag_ss": 1,
+          "koi_fpflag_co": 0,
+          "koi_fpflag_ec": 0
+        },
+        "koi_comment": "MOD_SEC_DV---MOD_SEC_ALT",
+        "period_days": 331.5972732,
+        "epoch_bkjd": 140.498929,
+        "match_evidence": {
+          "kepoi_name": "K00351.01",
+          "period_ratio": 0.9999827299511765,
+          "alias": null,
+          "same_period": true,
+          "phase_offset": 5.7083319511597175e-05,
+          "max_sep_h": 0.4542960000003404,
+          "half_duration_h": 7.245,
+          "sep_over_sigma_at_max": 19.836813930156847,
+          "compatible": true
+        }
+      },
+      "archive_status_verified": {
+        "status": "Confirmed planet",
+        "pl_name": "KOI-351 h",
+        "kepler_name": "Kepler-90 h",
+        "soltype": "Published Confirmed",
+        "discovery_reference": "Cabrera et al. 2014 (https://ui.adsabs.harvard.edu/abs/2014ApJ...781...18C/abstract)",
+        "disc_year": 2013,
+        "cross_id": "keplernames: KIC 11442793 + K00351.01 -> KOI-351 h",
+        "evidence": "ps default period 331.603 d vs 331.597 d (ratio 1.00002); transit times within 0.59 h over the mission (tolerance 7.20 h)",
+        "match": {
+          "period_ratio": 1.0000171497188295,
+          "alias": null,
+          "same_period": true,
+          "phase_offset": 4.918617265481373e-06,
+          "max_sep_h": 0.5850768017517112,
+          "half_duration_h": 7.202,
+          "sep_over_sigma_at_max": 12.398440536807199,
+          "compatible": true
+        }
+      },
+      "assessment": "no explanation proposed",
+      "assessment_note": "Bundled example (Kepler-90 h, demo hold-out)."
+    },
+    {
+      "category": "bundled example",
+      "tce_id": "kepler-90i",
+      "kepid": 11442793,
+      "bundled_example": true,
+      "dr24_label": null,
+      "cnn_score": 0.9866197109222412,
+      "dr24_ephemeris": {
+        "period_days": 14.44912,
+        "epoch_bkjd": 811.3487999998033,
+        "duration_hours": 2.8
+      },
+      "status": "unresolved: no DR25 KOI with a compatible period and epoch",
+      "koi_candidates": [
+        {
+          "kepoi_name": "K00351.01",
+          "period_ratio": 22.94930578471215,
+          "alias": null,
+          "same_period": false
+        },
+        {
+          "kepoi_name": "K00351.02",
+          "period_ratio": 14.57537789844641,
+          "alias": null,
+          "same_period": false
+        },
+        {
+          "kepoi_name": "K00351.03",
+          "period_ratio": 4.1343102071268,
+          "alias": null,
+          "same_period": false
+        },
+        {
+          "kepoi_name": "K00351.04",
+          "period_ratio": 6.3630259351434555,
+          "alias": null,
+          "same_period": false
+        },
+        {
+          "kepoi_name": "K00351.05",
+          "period_ratio": 0.6034832121264131,
+          "alias": null,
+          "same_period": false
+        },
+        {
+          "kepoi_name": "K00351.06",
+          "period_ratio": 0.4850273144662097,
+          "alias": null,
+          "same_period": false
+        },
+        {
+          "kepoi_name": "K00351.07",
+          "period_ratio": 8.645683335732556,
+          "alias": null,
+          "same_period": false
+        }
+      ],
+      "dr25_tces_on_star": [
+        {
+          "dr25_tce": "011442793_01",
+          "period_days": 331.603,
+          "epoch_bkjd": 140.48,
+          "period_ratio": 22.949702127188367,
+          "alias": null,
+          "same_period": false
+        },
+        {
+          "dr25_tce": "011442793_02",
+          "period_days": 210.593,
+          "epoch_bkjd": 147.099,
+          "period_ratio": 14.574797634734848,
+          "alias": null,
+          "same_period": false
+        },
+        {
+          "dr25_tce": "011442793_03",
+          "period_days": 59.7369,
+          "epoch_bkjd": 158.962,
+          "period_ratio": 4.134293299522739,
+          "alias": null,
+          "same_period": false
+        },
+        {
+          "dr25_tce": "011442793_04",
+          "period_days": 91.9395,
+          "epoch_bkjd": 134.307,
+          "period_ratio": 6.362982659151561,
+          "alias": null,
+          "same_period": false
+        },
+        {
+          "dr25_tce": "011442793_05",
+          "period_days": 124.915,
+          "epoch_bkjd": 254.704,
+          "period_ratio": 8.645163165646075,
+          "alias": null,
+          "same_period": false
+        },
+        {
+          "dr25_tce": "011442793_06",
+          "period_days": 7.00821,
+          "epoch_bkjd": 137.675,
+          "period_ratio": 0.4850267697963613,
+          "alias": null,
+          "same_period": false
+        },
+        {
+          "dr25_tce": "011442793_07",
+          "period_days": 8.7198,
+          "epoch_bkjd": 139.521,
+          "period_ratio": 0.6034831186951177,
+          "alias": null,
+          "same_period": false
+        }
+      ],
+      "archive_status_verified": {
+        "status": "Confirmed planet",
+        "pl_name": "Kepler-90 i",
+        "kepler_name": "Kepler-90 i",
+        "soltype": "Published Confirmed",
+        "discovery_reference": "Shallue & Vanderburg 2018 (https://ui.adsabs.harvard.edu/abs/2018AJ....155...94S/abstract)",
+        "disc_year": 2017,
+        "cross_id": "keplernames: KIC 11442793 + Kepler-90 i -> Kepler-90 i",
+        "evidence": "ps default period 14.4491 d vs 14.4491 d (ratio 1.00000); transit times within 0.00 h over the mission (tolerance 1.40 h)",
+        "match": {
+          "period_ratio": 1.0,
+          "alias": null,
+          "same_period": true,
+          "phase_offset": 0.0,
+          "max_sep_h": 0.0,
+          "half_duration_h": 1.4,
+          "sep_over_sigma_at_max": 0.0,
+          "compatible": true
+        }
+      },
+      "assessment": "no explanation proposed",
+      "assessment_note": "Bundled example (Kepler-90 i, not a DR24 TCE)."
     }
   ]
 }

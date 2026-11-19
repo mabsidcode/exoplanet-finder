@@ -1,0 +1,170 @@
+{
+  "examples": {
+    "002445134_02": {
+      "archive": null,
+      "disagreement": null,
+      "display": "Later-catalogue match unresolved.",
+      "dr24_label": "AFP",
+      "dr25": null,
+      "match_status": "unresolved",
+      "unresolved_reason": "no DR25 KOI with a compatible period and epoch"
+    },
+    "008231830_01": {
+      "archive": null,
+      "disagreement": null,
+      "display": "Later-catalogue match unresolved.",
+      "dr24_label": "NTP",
+      "dr25": null,
+      "match_status": "unresolved",
+      "unresolved_reason": "no DR25 KOI on this star"
+    },
+    "008822421_01": {
+      "archive": null,
+      "disagreement": "DR24 labelled this signal a planet candidate (PC), but the later DR25 vetting classifies it as a false positive: not transit-like (its SWEET test found a sinusoid at this period larger than the dip, i.e. stellar variability).",
+      "dr24_label": "PC",
+      "dr25": {
+        "disposition": "FALSE POSITIVE",
+        "fp_flags": [
+          "not transit-like"
+        ],
+        "kepoi_name": "K06188.01",
+        "koi_comment": "SWEET_NTL",
+        "match_evidence": "same star; period ratio 1.00001; transit times within 0.23 h over the mission (tolerance 0.91 h)",
+        "source": {
+          "column": "koi_pdisposition (DR25 Robovetter disposition; table last updated 2017-08-31)",
+          "retrieved_utc": "2026-11-19T11:13:46+00:00",
+          "sha256": "212e655ac5eb6bca0f6f95d5bfeaa1bcd4f1ee660f427c27cb60d3d5039e30ae",
+          "table": "NASA Exoplanet Archive q1_q17_dr25_koi"
+        }
+      },
+      "match_status": "matched"
+    },
+    "010587105_03": {
+      "archive": {
+        "cross_id": "keplernames: KIC 10587105 + K00339.03 -> Kepler-529 d",
+        "disc_year": 2021,
+        "discovery_reference": "Valizadegan et al. 2022 (https://ui.adsabs.harvard.edu/abs/2022ApJ...926..120V/abstract)",
+        "evidence": "ps default period 35.8662 d vs 35.8656 d (ratio 1.00002); the Archive's default parameter set gives no transit epoch, so only the period was compared",
+        "kepler_name": "Kepler-529 d",
+        "pl_name": "Kepler-529 d",
+        "soltype": "Published Confirmed",
+        "source": {
+          "retrieved_utc": "2026-11-19T11:13:50+00:00",
+          "sha256": "da0509f1a08139e438513cb099b2a93be3e3170217db3381acbfc128da7efaa1",
+          "table": "NASA Exoplanet Archive Planetary Systems (ps), default parameter set; cross-ID via keplernames"
+        },
+        "status": "Confirmed planet"
+      },
+      "disagreement": "DR24 labelled this signal AFP (not a planet candidate), but the later DR25 vetting lists it as a planet candidate with no false-positive flags. The Archive's Planetary Systems table now lists it as the confirmed planet Kepler-529 d.",
+      "dr24_label": "AFP",
+      "dr25": {
+        "disposition": "CANDIDATE",
+        "fp_flags": [],
+        "kepoi_name": "K00339.03",
+        "koi_comment": "NO_COMMENT",
+        "match_evidence": "same star; period ratio 1.00000; transit times within 0.11 h over the mission (tolerance 3.45 h)",
+        "source": {
+          "column": "koi_pdisposition (DR25 Robovetter disposition; table last updated 2017-08-31)",
+          "retrieved_utc": "2026-11-19T11:13:46+00:00",
+          "sha256": "212e655ac5eb6bca0f6f95d5bfeaa1bcd4f1ee660f427c27cb60d3d5039e30ae",
+          "table": "NASA Exoplanet Archive q1_q17_dr25_koi"
+        }
+      },
+      "match_status": "matched"
+    },
+    "011342416_01": {
+      "archive": {
+        "cross_id": "keplernames: KIC 11342416 + K02366.01 -> Kepler-1209 b",
+        "disc_year": 2016,
+        "discovery_reference": "Morton et al. 2016 (https://ui.adsabs.harvard.edu/abs/2016ApJ...822...86M/abstract)",
+        "evidence": "ps default period 25.3691 d vs 25.3691 d (ratio 1.00000); transit times within 0.05 h over the mission (tolerance 2.37 h)",
+        "kepler_name": "Kepler-1209 b",
+        "pl_name": "Kepler-1209 b",
+        "soltype": "Published Confirmed",
+        "source": {
+          "retrieved_utc": "2026-11-19T11:13:50+00:00",
+          "sha256": "da0509f1a08139e438513cb099b2a93be3e3170217db3381acbfc128da7efaa1",
+          "table": "NASA Exoplanet Archive Planetary Systems (ps), default parameter set; cross-ID via keplernames"
+        },
+        "status": "Confirmed planet"
+      },
+      "disagreement": null,
+      "dr24_label": "PC",
+      "dr25": {
+        "disposition": "CANDIDATE",
+        "fp_flags": [],
+        "kepoi_name": "K02366.01",
+        "koi_comment": "NO_COMMENT",
+        "match_evidence": "same star; period ratio 1.00000; transit times within 0.04 h over the mission (tolerance 2.32 h)",
+        "source": {
+          "column": "koi_pdisposition (DR25 Robovetter disposition; table last updated 2017-08-31)",
+          "retrieved_utc": "2026-11-19T11:13:46+00:00",
+          "sha256": "212e655ac5eb6bca0f6f95d5bfeaa1bcd4f1ee660f427c27cb60d3d5039e30ae",
+          "table": "NASA Exoplanet Archive q1_q17_dr25_koi"
+        }
+      },
+      "match_status": "matched"
+    },
+    "011442793_01": {
+      "archive": {
+        "cross_id": "keplernames: KIC 11442793 + K00351.01 -> KOI-351 h",
+        "disc_year": 2013,
+        "discovery_reference": "Cabrera et al. 2014 (https://ui.adsabs.harvard.edu/abs/2014ApJ...781...18C/abstract)",
+        "evidence": "ps default period 331.603 d vs 331.597 d (ratio 1.00002); transit times within 0.59 h over the mission (tolerance 7.20 h)",
+        "kepler_name": "Kepler-90 h",
+        "pl_name": "KOI-351 h",
+        "soltype": "Published Confirmed",
+        "source": {
+          "retrieved_utc": "2026-11-19T11:13:50+00:00",
+          "sha256": "da0509f1a08139e438513cb099b2a93be3e3170217db3381acbfc128da7efaa1",
+          "table": "NASA Exoplanet Archive Planetary Systems (ps), default parameter set; cross-ID via keplernames"
+        },
+        "status": "Confirmed planet"
+      },
+      "disagreement": "DR24 labelled this signal a planet candidate (PC), but the later DR25 vetting classifies it as a false positive: stellar eclipse. The Archive's Planetary Systems table, however, lists it as the confirmed planet Kepler-90 h, so DR25's automated disposition is itself contradicted by later work.",
+      "dr24_label": "PC",
+      "dr25": {
+        "disposition": "FALSE POSITIVE",
+        "fp_flags": [
+          "stellar eclipse"
+        ],
+        "kepoi_name": "K00351.01",
+        "koi_comment": "MOD_SEC_DV---MOD_SEC_ALT",
+        "match_evidence": "same star; period ratio 0.99998; transit times within 0.45 h over the mission (tolerance 7.25 h)",
+        "source": {
+          "column": "koi_pdisposition (DR25 Robovetter disposition; table last updated 2017-08-31)",
+          "retrieved_utc": "2026-11-19T11:13:46+00:00",
+          "sha256": "212e655ac5eb6bca0f6f95d5bfeaa1bcd4f1ee660f427c27cb60d3d5039e30ae",
+          "table": "NASA Exoplanet Archive q1_q17_dr25_koi"
+        }
+      },
+      "match_status": "matched"
+    },
+    "kepler-90i": {
+      "archive": {
+        "cross_id": "keplernames: KIC 11442793 + Kepler-90 i -> Kepler-90 i",
+        "disc_year": 2017,
+        "discovery_reference": "Shallue & Vanderburg 2018 (https://ui.adsabs.harvard.edu/abs/2018AJ....155...94S/abstract)",
+        "evidence": "ps default period 14.4491 d vs 14.4491 d (ratio 1.00000); transit times within 0.00 h over the mission (tolerance 1.40 h)",
+        "kepler_name": "Kepler-90 i",
+        "pl_name": "Kepler-90 i",
+        "soltype": "Published Confirmed",
+        "source": {
+          "retrieved_utc": "2026-11-19T11:13:50+00:00",
+          "sha256": "da0509f1a08139e438513cb099b2a93be3e3170217db3381acbfc128da7efaa1",
+          "table": "NASA Exoplanet Archive Planetary Systems (ps), default parameter set; cross-ID via keplernames"
+        },
+        "status": "Confirmed planet"
+      },
+      "disagreement": null,
+      "display": "Later-catalogue match unresolved.",
+      "dr24_label": null,
+      "dr25": null,
+      "match_status": "unresolved",
+      "unresolved_reason": "no DR25 KOI with a compatible period and epoch"
+    }
+  },
+  "generated_by": "scripts/check_dr25_koi.py",
+  "note": "Later-catalogue context for the demo cards. Not used for training, model selection or evaluation; the model was trained and evaluated on DR24 av_training_set labels.",
+  "unresolved_text": "Later-catalogue match unresolved."
+}

@@ -1,16 +1,30 @@
 {
   "dr25_koi.csv": {
     "tap_url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync",
-    "query": "select kepid,kepoi_name,kepler_name,koi_disposition,koi_pdisposition,koi_score,koi_fpflag_nt,koi_fpflag_ss,koi_fpflag_co,koi_fpflag_ec,koi_comment,koi_period,koi_period_err1,koi_time0bk,koi_time0bk_err1,koi_duration,koi_depth,koi_tce_plnt_num,koi_tce_delivname from q1_q17_dr25_koi where kepid in (2445134,4678875,5785279,6611330,7898352,8231830,8822421,9047416,10352333,10470206,10587105,11342416) order by kepid,kepoi_name",
-    "retrieved_utc": "2026-11-19T10:56:01+00:00",
-    "sha256": "9970ee2527a5a5d0497d5a4fc6782b7fc8dd4e79a789b7fe3f550b2b4a2214d2",
-    "n_rows": 14
+    "query": "select kepid,kepoi_name,kepler_name,koi_disposition,koi_pdisposition,koi_score,koi_fpflag_nt,koi_fpflag_ss,koi_fpflag_co,koi_fpflag_ec,koi_comment,koi_period,koi_period_err1,koi_time0bk,koi_time0bk_err1,koi_duration,koi_depth,koi_tce_plnt_num,koi_tce_delivname from q1_q17_dr25_koi where kepid in (2445134,4678875,5785279,6611330,7898352,8231830,8822421,9047416,10352333,10470206,10587105,11342416,11442793) order by kepid,kepoi_name",
+    "retrieved_utc": "2026-11-19T11:13:46+00:00",
+    "sha256": "212e655ac5eb6bca0f6f95d5bfeaa1bcd4f1ee660f427c27cb60d3d5039e30ae",
+    "n_rows": 21
   },
   "dr25_tce.csv": {
     "tap_url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync",
-    "query": "select kepid,tce_plnt_num,tce_period,tce_period_err,tce_time0bk,tce_time0bk_err,tce_duration,tce_depth,tce_model_snr from q1_q17_dr25_tce where kepid in (2445134,4678875,5785279,6611330,7898352,8231830,8822421,9047416,10352333,10470206,10587105,11342416) order by kepid,tce_plnt_num",
-    "retrieved_utc": "2026-11-19T10:56:02+00:00",
-    "sha256": "19dad91f47c8e3d6ddb9e5e9852a4d994c1fe87b52cd66c521f4661c4df1b8c5",
-    "n_rows": 18
+    "query": "select kepid,tce_plnt_num,tce_period,tce_period_err,tce_time0bk,tce_time0bk_err,tce_duration,tce_depth,tce_model_snr from q1_q17_dr25_tce where kepid in (2445134,4678875,5785279,6611330,7898352,8231830,8822421,9047416,10352333,10470206,10587105,11342416,11442793) order by kepid,tce_plnt_num",
+    "retrieved_utc": "2026-11-19T11:13:47+00:00",
+    "sha256": "7f3946fab4b3e1da0692955f4881afeafbed77cd1e0b589ea181a72ef339b9dd",
+    "n_rows": 25
+  },
+  "keplernames.csv": {
+    "tap_url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync",
+    "query": "select kepid,koi_name,kepler_name,pl_name from keplernames where kepid in (2445134,4678875,5785279,6611330,7898352,8231830,8822421,9047416,10352333,10470206,10587105,11342416,11442793) order by kepid,pl_name",
+    "retrieved_utc": "2026-11-19T11:13:48+00:00",
+    "sha256": "aaf42e6047b43cc937517441ebb9ed93dcb839822f7c7195be26bbf9fd8da05b",
+    "n_rows": 14
+  },
+  "ps.csv": {
+    "tap_url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync",
+    "query": "select pl_name,hostname,default_flag,soltype,pl_orbper,pl_orbpererr1,pl_tranmid,pl_tranmiderr1,disc_year,disc_refname,pl_controv_flag,rowupdate from ps where default_flag=1 and pl_name in ('KOI-351 b','KOI-351 c','KOI-351 d','KOI-351 e','KOI-351 f','KOI-351 g','KOI-351 h','Kepler-1209 b','Kepler-302 b','Kepler-302 c','Kepler-529 b','Kepler-529 c','Kepler-529 d','Kepler-90 i') order by pl_name",
+    "retrieved_utc": "2026-11-19T11:13:50+00:00",
+    "sha256": "da0509f1a08139e438513cb099b2a93be3e3170217db3381acbfc128da7efaa1",
+    "n_rows": 14
   }
 }

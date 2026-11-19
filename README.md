@@ -231,7 +231,15 @@ streamlit run app/streamlit_app.py
 
 * **Score a candidate**: choose a bundled real Kepler TCE (selected by fixed rules after the model was frozen, and
   including failures) or Kepler-90 h / i, or upload a CSV (`time`, `flux`, optional `quality`, `segment`; time in BKJD or
-  BJD_TDB; ≤ 25 MB). The page shows catalogue information separately from the model output. You can inspect the raw
+  BJD_TDB; ≤ 25 MB). The page shows catalogue information separately from the model output. For bundled examples,
+  a *Later catalogues* card shows later-catalogue context, never used for training or evaluation:
+  * the original DR24 training label;
+  * the matched DR25 KOI and its DR25 disposition;
+  * the NASA Archive status, only where independently verified, with source and retrieval date;
+  * a note when the catalogues disagree.
+
+  Uncertain matches read "Later-catalogue match unresolved." The context is bundled in
+  `app/examples/later_catalogue.json`, so it works offline. You can inspect the raw
   light curve with its trend, the folded transit, both model-input views, the score and the threshold, and
   download a JSON report.
 * **Measured results**: metrics, an interactive PR curve, seed variation, bootstrap intervals and subgroups.

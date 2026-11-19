@@ -5,7 +5,9 @@ from ui import (
     EXAMPLES_DIR,
     REPRODUCE_CMD,
     folded_figure,
+    later_catalogue_html,
     load_examples,
+    load_later_catalogue,
     load_raw,
     load_release_bundle,
     raw_figure,
@@ -157,6 +159,11 @@ with left:
             body = (f"<span class='tag cat'>{ex['catalogue_disposition']}</span> {ex['catalogue_release']}<br>"
                     f"{ex['catalogue_status']}<br><span class='small'>Parameters: {ex['parameter_source']}</span>")
         st.markdown(f"<div class='card'><h4>Catalogue information (not model output)</h4>{body}</div>", unsafe_allow_html=True)
+        later = load_later_catalogue()
+        later_body = later_catalogue_html(later["examples"].get(ex["id"]), later.get("unresolved_text", ""))
+        if later_body:
+            st.markdown("<div class='card'><h4>Later catalogues (context only; not used for training or evaluation)</h4>"
+                        f"{later_body}</div>", unsafe_allow_html=True)
     else:
         st.markdown("<div class='card'><h4>Catalogue information</h4>User upload — no catalogue label.</div>", unsafe_allow_html=True)
     st.markdown(
