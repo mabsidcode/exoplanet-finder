@@ -2,11 +2,11 @@
 
 Every number here comes from files in this repository:
 * `reports/full/metrics.json` and `reports/full/predictions.csv.gz` (per-example scores for every split and model)
-* `reports/full/model_selection.json`, committed **before** test evaluation (commit `cd844af`)
+* `reports/full/model_selection.json`, committed **before** test evaluation (commit `2e67b4f`)
 * `reports/full/data_reconciliation.json`
 
 The evaluation procedure was committed in [`EVALUATION_PROTOCOL.md`](EVALUATION_PROTOCOL.md) before training
-(commit `074747a`). The auto-generated tables are in [`reports/full/RESULTS.md`](../reports/full/RESULTS.md).
+(commit `4ef7791`). The auto-generated tables are in [`reports/full/RESULTS.md`](../reports/full/RESULTS.md).
 
 ## 1. What was measured
 

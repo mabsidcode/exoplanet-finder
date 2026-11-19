@@ -72,7 +72,7 @@ automatically when available. No paid services or API keys. The demo needs **no 
 (`models/release/`) and seven real Kepler light curves (`app/examples/`) are committed (repository ≈ 30 MB).
 
 ```bash
-git clone <repository-url> exoplanet-finder && cd exoplanet-finder
+git clone https://github.com/mabsidcode/exoplanet-finder.git && cd exoplanet-finder
 python3.14 -m venv .venv && source .venv/bin/activate   # or any Python 3.11–3.14
 pip install -e ".[dev]"            # exact versions used: requirements-lock.txt
 

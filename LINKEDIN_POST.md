@@ -28,7 +28,7 @@ What I learned:
 → Seeds matter. My three training runs scored 0.908, 0.869 and 0.913, so I report all of them instead of the best one.
 → The model's confident "mistakes" taught me the most. I checked them against NASA's later DR25 catalogue, matching each signal by star, period and timing. Its top-scoring "false positive" is a planet candidate in DR25, and NASA's Exoplanet Archive now lists it as the confirmed planet Kepler-529 d. The next one was flagged in DR25 for a centroid offset: the dip comes from a neighbouring star, which a light curve alone can't reveal. And the planet candidate it scored lowest was later flagged as not transit-like, dominated by sinusoidal stellar variability. So some "errors" are really disagreements between catalogue releases. (My metrics still use the original DR24 labels.)
 
-The code, model card and a beginner walkthrough are in the repo [add link]. Huge credit to Shallue & Vanderburg (arXiv:1712.05044), the AstroNet code from Google Research, and NASA's Exoplanet Archive and MAST for making all this data public.
+The code, model card and a beginner walkthrough are in the repo: https://github.com/mabsidcode/exoplanet-finder Huge credit to Shallue & Vanderburg (arXiv:1712.05044), the AstroNet code from Google Research, and NASA's Exoplanet Archive and MAST for making all this data public.
 
 #MachineLearning #DeepLearning #Astronomy #Exoplanets #PyTorch #DataScience
 
