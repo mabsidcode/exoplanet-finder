@@ -27,7 +27,8 @@
 
 ## Training data
 * **Population**: Kepler Q1–Q17 DR24 TCEs with an `av_training_set` label (PC 3,600; AFP 9,596; NTP 2,541;
-  15,737 TCEs on 9,865 stars). UNK (4,630) is excluded.
+  15,737 TCEs on 9,865 stars). UNK (4,630) is excluded. Light curves were downloaded for all 9,865 stars;
+  after preprocessing, 15,733 TCEs on 9,861 stars were usable.
 * **Label meaning**: PC → 1 (DR24 *planet candidate*, not confirmed planet); AFP (astrophysical false positive,
   mostly eclipsing binaries, blends and contamination) and NTP (non-transiting phenomenon: instrumental or stellar
   artefacts) → 0. The labels came from manual vetting and other diagnostics (Catanzarite 2015) and contain known
@@ -37,7 +38,7 @@
 * **Split**: grouped by host star, 70/15/15, seed 20171215, stratified by whether the star hosts a PC. Kepler-90 is
   held out for the demo.
 * **Exclusions**: examples that fail preprocessing (insufficient coverage, no dip, too few points, download failure)
-  are listed with reasons in `data/datasets/full/examples.csv` and summarised in the results.
+  are listed with reasons in `reports/full/dataset/examples.csv.gz` (committed) and summarised in the results.
 
 ## Evaluation
 See [`reports/full/RESULTS.md`](reports/full/RESULTS.md) and the Results section of the README.
@@ -55,7 +56,8 @@ See [`reports/full/RESULTS.md`](reports/full/RESULTS.md) and the Results section
   [+0.013, +0.070]. Across 3 seeds, global+local AP is 0.897 ± 0.024 and global-only AP is 0.882 ± 0.004.
 * **Weakest subgroups**: measured SNR < 18.8 (AP 0.850, recall 0.820) and duration < 2.42 h (AP 0.868, recall
   0.829).
-* **Usable data**: 15,733 of 15,737 labelled TCEs (4 training NTPs rejected by preprocessing). 0 download failures.
+* **Usable data**: 15,733 of 15,737 labelled TCEs, on 9,861 of the 9,865 downloaded stars (4 training NTPs
+  rejected by preprocessing). 0 final download failures.
 * Details: [docs/RESULTS_REPORT.md](docs/RESULTS_REPORT.md).
 <!-- MODEL-CARD-RESULTS:END -->
 
@@ -71,7 +73,8 @@ See [`reports/full/RESULTS.md`](reports/full/RESULTS.md) and the Results section
 * **Training instability**: one of three seeds (seed 1) plateaued early (test AP 0.869 vs 0.908 and 0.913), so a
   single retrained model may perform noticeably differently.
 * **Light-curve-only blind spot**: AFPs identified from centroid shifts or contaminating neighbours can look like
-  clean transits and receive high scores.
+  clean transits and receive high scores. We suspect this explains the highest-scoring test AFPs, but have not
+  checked it against catalogue diagnostics.
 * **Score is uncalibrated** (test Brier 0.052, for reference only). Scores near the threshold should be treated as uncertain.
 
 ## Distribution limits

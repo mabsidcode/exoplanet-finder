@@ -10,5 +10,9 @@ font = "sans serif"
 maxUploadSize = 25
 headless = true
 
+[client]
+# hide developer-only menu items (e.g. "Deploy") in the public demo
+toolbarMode = "viewer"
+
 [browser]
 gatherUsageStats = false

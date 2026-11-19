@@ -45,4 +45,7 @@ ignore = ["E501"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-markers = ["realdata: uses bundled real Kepler data (offline)"]
+markers = [
+  "realdata: uses bundled real Kepler data (offline)",
+  "app: drives the Streamlit app headlessly with streamlit.testing (offline)",
+]

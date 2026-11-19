@@ -42,9 +42,11 @@ training, checkpoint selection or thresholds. 545 are PC, so prevalence is 23.1%
   For Kepler-90 i (not a DR24 TCE; Shallue & Vanderburg 2018 parameters): **0.987**. Both are above the 0.671
   threshold. That means both folded signals resemble DR24 planet candidates; it is not independent confirmation.
   The gradient-boosting baseline scored Kepler-90 h below its threshold (0.523 vs 0.626).
-* Main failure modes in the test set: AFPs that look like clean planetary transits in the light curve (their FP
-  status comes from evidence such as pixel centroids, which the model never sees), and PCs whose stars vary strongly
-  on time scales near the orbital period, which detrending does not fully remove.
+* Main failure modes in the test set: AFPs that look like clean planetary transits in the light curve, and PCs whose
+  stars vary strongly on time scales near the orbital period, which detrending does not fully remove. Our
+  *hypothesis* for the first group is that their FP status rests on evidence the model never sees, such as pixel
+  centroid shifts. This has not been checked against catalogue diagnostics (see
+  [error analysis](docs/RESULTS_REPORT.md#7-error-analysis-examples-chosen-by-fixed-rules-not-by-hand)).
 * Scores are **not calibrated** probabilities (test Brier score 0.052, reported for reference only).
 
 Not comparable to the paper's AUC 0.988: different split (by star rather than random by TCE), light-curve release,
@@ -55,27 +57,32 @@ preprocessing, architecture and no 10-model ensemble.
 
 ## Quick start
 
-Requirements: Python ≥ 3.11 (developed on 3.14.7, macOS / Apple M5). CPU works; Apple MPS or CUDA are used
-automatically when available. No paid services or API keys.
+Requirements: Python ≥ 3.11 (developed and tested on 3.14.7, macOS / Apple M5). CPU works; Apple MPS or CUDA are used
+automatically when available. No paid services or API keys. The demo needs **no dataset download**: the release model
+(`models/release/`) and seven real Kepler light curves (`app/examples/`) are committed (repository ≈ 30 MB).
 
 ```bash
+git clone <repository-url> exoplanet-finder && cd exoplanet-finder
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"            # exact versions used: requirements-lock.txt
 
 # Demo with the committed release model and bundled real Kepler light curves (offline):
-streamlit run app/streamlit_app.py
+streamlit run app/streamlit_app.py # then open http://localhost:8501
 
-# Verification
+# Verification (offline, ~20 s)
 ruff check src tests app scripts
-pytest -q
+pytest -q                          # includes headless end-to-end tests of all three app pages
 ```
+
+`pip install -e` (editable) is required: the code locates `configs/`, `models/` and `app/examples/` relative to the
+repository checkout.
 
 ### Reproduce from scratch
 
 The catalogue snapshot (`data/catalog/`) and the fixed split (`data/splits/`) are committed, so the steps below
 reproduce the same examples. `fetch-catalog` and `make-splits` refuse to overwrite them unless you pass `--force`.
 
-| step | quick-start (50 stars, ~3 min) | full experiment (9,865 stars) |
+| step | quick-start (50 stars, ~3 min) | full experiment (9,865 stars downloaded, 9,861 usable) |
 |---|---|---|
 | catalogue snapshot | `exofinder fetch-catalog --config configs/quickstart.yaml` | same, `configs/full.yaml` |
 | star-grouped split | `exofinder make-splits --config configs/quickstart.yaml` | same |
@@ -220,6 +227,26 @@ streamlit run app/streamlit_app.py
 * **Measured results**: metrics, an interactive PR curve, seed variation, bootstrap intervals and subgroups.
 * **How it works & limits.**
 
+**Uploaded CSVs** go through the same preprocessing as training. `tests/test_upload_workflow.py` exports every bundled
+example to the CSV format, uploads it and checks the prediction against the bundled-example workflow:
+
+| CSV variant | tolerance (observed) |
+|---|---|
+| `time` in BKJD, with `quality` and `segment` | views bit-identical; \|Δscore\| ≤ 1e-6 (observed 0) |
+| `time` in BJD_TDB (epoch entered in BJD) | views within 1e-5, \|Δscore\| ≤ 1e-5 (observed: views ≤ 2.4e-7, scores 0) |
+| vs the score recorded at bundling time | \|Δscore\| ≤ 1e-5 (allows for other machines and library versions) |
+
+Include the `segment` column (Kepler quarter) to reproduce training exactly. Without it, each quarter is not
+normalised separately, and scores for the bundled examples moved by up to 2e-3. Invalid files (not UTF-8, wrong
+delimiter, missing columns, non-numeric or non-positive flux, blank or non-integer `quality`/`segment`, too few rows)
+and rejected candidates (invalid parameters, no data in the transit window, low coverage, no dip) produce a plain
+error message instead of a traceback; `tests/test_app.py` drives these cases through the real app.
+
+The **prediction report** (JSON) records the input (bundled example metadata, or the uploaded file's name, size,
+SHA-256, time reference and parser warnings), the candidate parameters (in BKJD and as entered), the model run,
+checkpoint SHA-256, threshold and preprocessing fingerprint, the score with its interpretation, the signal
+diagnostics, and the caveat that a score is not a confirmation.
+
 If no checkpoint exists, the app says so and shows the commands that create it. Bundled examples need no network.
 **The app does not search for periods.** It scores a candidate whose period, epoch and duration you supply. A blind
 period search (e.g. Box Least Squares) is a possible extension.
@@ -247,7 +274,7 @@ paper's**.
 ```
 configs/              quickstart.yaml, full.yaml
 src/exofinder/        catalog, splits, lightcurve, preprocess, pipeline, dataset,
-                      baseline, model, train, metrics, evaluate, inference, upload, release, cli
+                      baseline, model, train, metrics, evaluate, inference, upload, report, release, cli
 app/                  Streamlit app (pages/), bundled real light curves (examples/)
 data/catalog/         DR24 snapshot + provenance            (committed)
 data/splits/          split manifest + info                 (committed)

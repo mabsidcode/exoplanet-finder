@@ -86,9 +86,17 @@ if bs:
 sub = metrics.get("subgroups_test", {}).get(rel)
 if sub:
     st.subheader("Where the release CNN does well and poorly (test split)")
-    st.dataframe(pd.DataFrame(sub).style.format(precision=3, na_rep="n/a"), hide_index=True, width="stretch")
+    sg = pd.DataFrame(sub)
+    cols = {"group": "subgroup", "value": "range / value", "n": "n", "n_pos": "PC", "n_neg": "AFP+NTP",
+            "average_precision": "AP", "recall": "recall", "false_positive_rate": "false-positive rate"}
+    sg = sg[[c for c in cols if c in sg]].rename(columns=cols)
+    for c in ("AP", "recall", "false-positive rate"):
+        if c in sg:  # undefined metrics (e.g. recall for a group with no PCs) are shown as "n/a", not "None"
+            sg[c] = [f"{v:.3f}" if pd.notna(v) else "n/a" for v in sg[c]]
+    st.dataframe(sg, hide_index=True, width="stretch", height=36 * (len(sg) + 1) + 4)  # show every row
     st.caption("Depth, duration and SNR terciles use edges computed on the training split. AP is shown only for subgroups "
-               "with ≥30 examples and ≥5 of each class.")
+               "with ≥30 examples and ≥5 of each class; recall is undefined without PCs and the false-positive rate "
+               "without AFP/NTP examples (n/a).")
 
 st.subheader("Figures")
 for f, cap in [("confusion_" + rel, "Confusion matrix at the validation-selected threshold"),

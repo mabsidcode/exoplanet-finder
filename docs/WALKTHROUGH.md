@@ -179,7 +179,8 @@ Vanderburg using such additional analyses, not by the CNN score alone.
 * Kepler-90 h scored 0.982 and Kepler-90 i 0.987 (threshold 0.671). The global-only models gave Kepler-90 h scores
   of 0.017, 0.490 and 0.810: in a 2001-bin view of a 331-day orbit, its transit is only ~4 bins wide. That is the
   problem the local view solves.
-* Typical mistakes: AFPs that look like perfect transits (they were rejected using pixel-level evidence the model
-  never sees), and real candidates on very variable stars, where detrending could not flatten the light curve.
+* Typical mistakes: AFPs that look like perfect transits, and real candidates on very variable stars, where
+  detrending could not flatten the light curve. A plausible explanation for the first kind, not yet checked against
+  the catalogue, is that those signals were rejected using pixel-level evidence the model never sees.
 
 Full numbers, figures and error analysis: [RESULTS_REPORT.md](RESULTS_REPORT.md).

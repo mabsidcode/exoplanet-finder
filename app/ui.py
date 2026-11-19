@@ -69,6 +69,22 @@ def load_release_bundle():
 
 
 @st.cache_data
+def release_checkpoint_sha256() -> str | None:
+    from exofinder.io_utils import file_digest
+
+    path = RELEASE_DIR / "cnn.pt"
+    return file_digest(path) if path.exists() else None
+
+
+@st.cache_data(show_spinner=False)
+def sample_csv_bytes(npz_name: str) -> bytes:
+    from exofinder.upload import light_curve_to_csv
+
+    raw = load_raw(str(EXAMPLES_DIR / npz_name))
+    return light_curve_to_csv(raw["time"], raw["flux"], raw["quality"], raw["segment"])
+
+
+@st.cache_data
 def load_examples() -> dict | None:
     p = EXAMPLES_DIR / "examples.json"
     return json.loads(p.read_text()) if p.exists() else None
@@ -87,18 +103,19 @@ def load_raw(path: str) -> dict:
     return load_bundled_raw(Path(path))
 
 
-def layout(fig: go.Figure, title: str, xlab: str, ylab: str, height: int = 330) -> go.Figure:
+def layout(fig: go.Figure, title: str, xlab: str, ylab: str, height: int = 370) -> go.Figure:
     fig.update_layout(
         template="plotly_dark",
         paper_bgcolor=PANEL,
         plot_bgcolor=BG,
         height=height,
-        margin=dict(l=60, r=20, t=45, b=50),
+        margin=dict(l=60, r=20, t=45, b=95),
         title=dict(text=title, font=dict(size=14)),
         xaxis_title=xlab,
         yaxis_title=ylab,
         showlegend=True,
-        legend=dict(orientation="h", y=1.02, x=1, xanchor="right", yanchor="bottom", font=dict(size=11)),
+        # legend below the axis title, so it never collides with the chart title on narrow screens
+        legend=dict(orientation="h", y=-0.22, x=0, xanchor="left", yanchor="top", font=dict(size=11)),
         font=dict(size=12),
     )
     fig.update_xaxes(gridcolor="#1d2540", zeroline=False)
@@ -110,22 +127,46 @@ def _thin(n: int, max_points: int = 20000) -> slice:
     return slice(None, None, max(1, n // max_points))
 
 
+def _break_at_gaps(t: np.ndarray, y: np.ndarray, gap_days: float = 0.75) -> tuple[np.ndarray, np.ndarray]:
+    """Insert NaN between points separated by more than ``gap_days`` so a line is not drawn across data gaps."""
+    cut = np.flatnonzero(np.diff(t) > gap_days) + 1
+    return np.insert(t.astype(float), cut, np.nan), np.insert(y.astype(float), cut, np.nan)
+
+
 def raw_figure(pc) -> go.Figure:
     s = _thin(len(pc.time))
     fig = go.Figure()
     fig.add_scattergl(x=pc.time[s], y=pc.flux[s], mode="markers", marker=dict(size=2, color="#c9d3ea"), name="relative flux")
-    fig.add_scattergl(x=pc.time[s], y=pc.trend[s], mode="lines", line=dict(width=1.2, color=WARN), name="fitted trend (transits masked)")
-    return layout(fig, "Light curve after quality filtering (each segment median-normalised)", "Time (BKJD = BJD_TDB − 2454833, days)", "Relative flux")
+    tx, ty = _break_at_gaps(pc.time[s], pc.trend[s])
+    fig.add_scattergl(x=tx, y=ty, mode="lines", line=dict(width=1.2, color=WARN), connectgaps=False,
+                      name="fitted trend (transits masked)")
+    return layout(fig, "Light curve after quality filtering", "Time (BKJD = BJD_TDB − 2454833, days)",
+                  "Relative flux (segment median = 1)")
 
 
 def folded_figure(pc, params) -> go.Figure:
+    """Folded points plus a binned median. The y-range is set from the data's 1st–99.5th percentiles and the
+    binned curve, so a shallow transit stays visible when a few points (e.g. another planet's transits) are deep."""
     D = params.duration_days
     win = min(0.5 * params.period_days, 4 * D)
     sel = np.abs(pc.phase) < win
+    x, y = pc.phase[sel] * 24, (pc.detrended[sel] - 1) * 1e6
     fig = go.Figure()
-    fig.add_scattergl(x=pc.phase[sel] * 24, y=(pc.detrended[sel] - 1) * 1e6, mode="markers",
-                      marker=dict(size=3, color="#c9d3ea", opacity=0.6), name="detrended observations")
-    fig.add_vrect(x0=-12 * D, x1=12 * D, fillcolor=ACCENT, opacity=0.08, line_width=0, annotation_text="expected transit", annotation_position="top left")
+    fig.add_scattergl(x=x, y=y, mode="markers", marker=dict(size=3, color="#c9d3ea", opacity=0.45),
+                      name="detrended observations")
+    edges = np.linspace(-win * 24, win * 24, 65)  # 64 bins, 1/8 duration wide when the window is ±4 D
+    idx = np.digitize(x, edges) - 1
+    centers = 0.5 * (edges[1:] + edges[:-1])
+    med = np.array([np.median(y[idx == i]) if np.any(idx == i) else np.nan for i in range(len(centers))])
+    fig.add_scatter(x=centers, y=med, mode="lines+markers", line=dict(width=2, color=ACCENT),
+                    marker=dict(size=4), connectgaps=False, name="binned median")
+    fig.add_vrect(x0=-12 * D, x1=12 * D, fillcolor=ACCENT, opacity=0.08, line_width=0,
+                  annotation_text="expected transit", annotation_position="top left")
+    if y.size:
+        lo = min(np.percentile(y, 1), np.nanmin(med) if np.isfinite(med).any() else np.inf)
+        hi = np.percentile(y, 99.5)
+        pad = 0.15 * (hi - lo) if hi > lo else 1.0
+        fig.update_yaxes(range=[lo - pad, hi + pad])
     return layout(fig, "Detrended, phase-folded flux near the transit", "Hours from transit centre", "Flux change (ppm)")
 
 

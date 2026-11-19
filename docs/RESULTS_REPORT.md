@@ -123,19 +123,23 @@ U and secondary eclipses matters most.
 
 ![Examples](../reports/full/figures/error_analysis_examples.png)
 
+The scores, periods, depths and SNRs below are measured. The **explanations are hypotheses** based on looking at
+the model's input views. They have **not** been checked against catalogue evidence such as the DR24/DR25
+centroid-offset statistics or the KOI false-positive flags.
+
 * **High-scoring AFPs** (`010587105_03` score 0.999; `010470206_01` 0.996) show clean, flat-bottomed transits and no
-  visible secondary eclipse. Their AFP labels most likely rest on evidence the model never sees, such as centroid
-  shifts or a nearby contaminating star. This is an inherent limit of light-curve-only vetting.
+  visible secondary eclipse. *Hypothesis:* their AFP labels rest on evidence the model never sees, such as centroid
+  shifts or a nearby contaminating star. If so, this is an inherent limit of light-curve-only vetting.
 * **Low-scoring PCs** (`008822421_01`, P = 1.65 d; `009047416_01`, P = 9.0 d) show large residual stellar variability
-  in the global view after detrending. When variability happens on time scales close to the 1.5-day spline knot
-  spacing or the orbital period, the spline cannot remove it, and the transit is dwarfed (measured SNR 9.5 and 6.5).
-  `005785279_01` is a 66 ppm signal with SNR 11. All three are preprocessing or SNR failures rather than
-  shape-learning failures.
-* **High-scoring NTP** (`008231830_01`, 0.771): a 55 ppm, SNR 11.5 signal that is mostly noise, where a chance dip
-  near phase 0 looks transit-like.
-* **Correct rejections**: `002445134_02` is a TCE whose global view shows a deeper eclipse at phase ±0.5 than at
-  phase 0, which means it is the secondary eclipse of an eclipsing binary. `004678875_02` has a 0.63-day period with a
-  smooth, wide dip typical of stellar variability.
+  in the global view after detrending, and the transit is small by comparison (measured SNR 9.5 and 6.5).
+  `005785279_01` is a 66 ppm signal with SNR 11. *Hypothesis:* variability on time scales close to the 1.5-day spline
+  knot spacing or the orbital period is not removed by the spline, so these are preprocessing or SNR failures rather
+  than shape-learning failures. This was not tested, for example by re-scoring with different detrending.
+* **High-scoring NTP** (`008231830_01`, 0.771): a 55 ppm, SNR 11.5 signal. *Hypothesis:* it is mostly noise, and a
+  chance dip near phase 0 looks transit-like.
+* **Correct rejections**: `002445134_02`'s global view shows a deeper eclipse at phase ±0.5 than at phase 0. That
+  pattern is *consistent with* the TCE being the secondary eclipse of an eclipsing binary. `004678875_02` has a
+  0.63-day period with a smooth, wide dip, *consistent with* stellar variability.
 * **Borderline** cases at score 0.676 include a deep (7,000 ppm), short PC whose local view is asymmetric.
 
 ## 8. Kepler-90 demonstration (decided before training; frozen model)
